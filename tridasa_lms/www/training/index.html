@@ -1,0 +1,37 @@
+{% extends "templates/academy_base.html" %}
+{% block title %}My Trainings{% endblock %}
+{% block nav %}<a href="/training" aria-current="page">My Trainings</a><a href="/training/verify">Verify a certificate</a>{% endblock %}
+{% block content %}
+<section class="view">
+	<div class="hero-split"><div class="hero">
+		<span class="eyebrow">Tridasa Realty Ventures Pvt. Ltd. · Learning</span>
+		<h1>Hello{% if first_name %}, {{ frappe.utils.escape_html(first_name) }}{% endif %}</h1>
+		<p class="lede">Your mandatory trainings are below. Read the slides, pass the assessment, and download your certificate.</p>
+	</div><img class="skyline" src="/assets/tridasa_lms/images/skyline.svg" alt=""></div>
+
+	{% if trainings %}
+	<div class="cards">
+		{% for t in trainings %}
+		<article class="card">
+			<div class="meta">
+				<span class="pill {{ t.pill_class }}">{{ t.pill_label }}</span>
+				{% if t.overdue %}<span class="pill bad">Overdue</span>{% endif %}
+			</div>
+			<h3>{{ frappe.utils.escape_html(t.course_name) }}</h3>
+			{% if t.tagline %}<p class="note">{{ frappe.utils.escape_html(t.tagline) }}</p>{% endif %}
+			<div class="prog"><span>{{ t.progress|int }}% of slides read{% if t.best_score %} · best score {{ t.best_score|int }}%{% endif %}</span><div class="bar"><i style="width:{{ t.progress|int }}%"></i></div></div>
+			{% if t.due_label and t.status != "Certified" %}<p class="note">Complete by <b>{{ t.due_label }}</b></p>{% endif %}
+			<div class="cta-row">
+				<a class="btn {% if t.status in ('Course Completed','Assessment Failed') %}sun{% endif %}" href="/training/course?a={{ t.name }}{% if t.status == 'Certified' %}#certificate{% endif %}">{{ t.cta }}</a>
+			</div>
+		</article>
+		{% endfor %}
+	</div>
+	{% else %}
+	<div class="panel empty">
+		<h3>No trainings assigned yet</h3>
+		<p>When HR enrols you in a course, it appears here and you'll get an email.</p>
+	</div>
+	{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "templates/academy_base.html" %}
+{% block title %}Verify a certificate{% endblock %}
+{% block nav %}{% if frappe.session.user != "Guest" %}<a href="/training">My Trainings</a>{% endif %}<a href="/training/verify" aria-current="page">Verify</a>{% endblock %}
+{% block content %}
+<section class="view">
+	<div class="hero">
+		<span class="eyebrow">Certificate verification</span>
+		<h1>Is this certificate genuine?</h1>
+		<p class="lede">Enter the certificate number printed on a Tridasa DPDP Academy certificate.</p>
+	</div>
+	<form class="panel" method="get" action="/training/verify">
+		<label class="f" for="no">Certificate number <small>For example TRV-DPDP-2026-7KQ4M2X</small></label>
+		<div class="verify-form">
+			<input id="no" name="no" value="{{ frappe.utils.escape_html(query) }}" autocomplete="off" required>
+			<button class="btn" type="submit">Verify</button>
+		</div>
+	</form>
+	{% if result %}
+		{% if result.found %}
+		<div class="panel">
+			<div class="score"><span class="pill {{ 'ok' if result.status == 'Active' else 'bad' }}">{{ 'VALID' if result.status == 'Active' else result.status|upper }}</span>
+				<span class="mono">{{ result.certificate_no }}</span></div>
+			<div class="tablebox"><table>
+				<tr><th>Issued to</th><td><b>{{ frappe.utils.escape_html(result.employee_name) }}</b>{% if result.department %} · {{ frappe.utils.escape_html(result.department) }}{% endif %}</td></tr>
+				<tr><th>Course</th><td>{{ frappe.utils.escape_html(result.course_name) }}</td></tr>
+				<tr><th>Issued on</th><td>{{ result.issue_date }}</td></tr>
+				<tr><th>Valid until</th><td>{{ result.valid_until or "No expiry" }}</td></tr>
+			</table></div>
+			{% if result.status != 'Active' %}<p class="err">This certificate is {{ result.status|lower }} and should not be accepted as proof of current training.</p>{% endif %}
+		</div>
+		{% else %}
+		<div class="panel"><p class="err">No certificate with number <span class="mono">{{ frappe.utils.escape_html(query) }}</span> was found. Check the number and try again, or contact Tridasa HR.</p></div>
+		{% endif %}
+	{% endif %}
+</section>
+{% endblock %}

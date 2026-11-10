@@ -1,0 +1,306 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:course_code",
+ "creation": "2026-11-10 13:59:27.883016",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "course_name",
+  "course_code",
+  "version",
+  "cb_course",
+  "status",
+  "company",
+  "tagline",
+  "sb_intro",
+  "introduction",
+  "sb_slides",
+  "chapters",
+  "sb_assessment",
+  "questions_per_attempt",
+  "pass_percentage",
+  "max_attempts",
+  "cb_assessment",
+  "time_limit_minutes",
+  "show_correct_answers",
+  "active_questions",
+  "sb_enrol",
+  "due_in_days",
+  "reminder_every_days",
+  "cb_enrol",
+  "escalate_to_manager",
+  "auto_enroll_new_joiners",
+  "sb_cert",
+  "issue_certificate",
+  "certificate_title",
+  "certificate_prefix",
+  "certificate_validity_months",
+  "cb_cert",
+  "issuer_line",
+  "signatory_1",
+  "signatory_2"
+ ],
+ "fields": [
+  {
+   "fieldname": "course_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Course Name",
+   "reqd": 1
+  },
+  {
+   "description": "Short code, e.g. DPDP-2026. Becomes the record ID.",
+   "fieldname": "course_code",
+   "fieldtype": "Data",
+   "label": "Course Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Version"
+  },
+  {
+   "fieldname": "cb_course",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nPublished\nArchived"
+  },
+  {
+   "description": "Leave empty to allow invites across all companies.",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "tagline",
+   "fieldtype": "Data",
+   "label": "Tagline"
+  },
+  {
+   "fieldname": "sb_intro",
+   "fieldtype": "Section Break",
+   "label": "Introduction"
+  },
+  {
+   "description": "Shown on the course start screen above the slides.",
+   "fieldname": "introduction",
+   "fieldtype": "HTML Editor",
+   "label": "Introduction"
+  },
+  {
+   "fieldname": "sb_slides",
+   "fieldtype": "Section Break",
+   "label": "Slides"
+  },
+  {
+   "fieldname": "chapters",
+   "fieldtype": "Table",
+   "label": "Slides",
+   "options": "Training Course Chapter"
+  },
+  {
+   "fieldname": "sb_assessment",
+   "fieldtype": "Section Break",
+   "label": "Assessment"
+  },
+  {
+   "default": "10",
+   "fieldname": "questions_per_attempt",
+   "fieldtype": "Int",
+   "label": "Questions per Attempt",
+   "reqd": 1
+  },
+  {
+   "default": "80",
+   "fieldname": "pass_percentage",
+   "fieldtype": "Percent",
+   "label": "Pass Percentage",
+   "reqd": 1
+  },
+  {
+   "default": "3",
+   "description": "0 = unlimited. Managers can grant extra attempts per employee.",
+   "fieldname": "max_attempts",
+   "fieldtype": "Int",
+   "label": "Max Attempts"
+  },
+  {
+   "fieldname": "cb_assessment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "20",
+   "description": "0 = no limit.",
+   "fieldname": "time_limit_minutes",
+   "fieldtype": "Int",
+   "label": "Time Limit (minutes)"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_correct_answers",
+   "fieldtype": "Check",
+   "label": "Show Answers & Explanations After Submit"
+  },
+  {
+   "fieldname": "active_questions",
+   "fieldtype": "Int",
+   "label": "Active Questions in Bank",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_enrol",
+   "fieldtype": "Section Break",
+   "label": "Invitations & Reminders"
+  },
+  {
+   "default": "14",
+   "fieldname": "due_in_days",
+   "fieldtype": "Int",
+   "label": "Complete Within (days)"
+  },
+  {
+   "default": "3",
+   "description": "0 = no automatic reminders.",
+   "fieldname": "reminder_every_days",
+   "fieldtype": "Int",
+   "label": "Remind Every (days)"
+  },
+  {
+   "fieldname": "cb_enrol",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "escalate_to_manager",
+   "fieldtype": "Check",
+   "label": "Escalate Overdue to Reporting Manager"
+  },
+  {
+   "default": "1",
+   "description": "Invite every new Employee automatically while the course is Published.",
+   "fieldname": "auto_enroll_new_joiners",
+   "fieldtype": "Check",
+   "label": "Auto-invite New Joiners"
+  },
+  {
+   "fieldname": "sb_cert",
+   "fieldtype": "Section Break",
+   "label": "Certificate"
+  },
+  {
+   "default": "1",
+   "fieldname": "issue_certificate",
+   "fieldtype": "Check",
+   "label": "Issue Certificate on Passing"
+  },
+  {
+   "default": "Certificate of Completion",
+   "fieldname": "certificate_title",
+   "fieldtype": "Data",
+   "label": "Certificate Title"
+  },
+  {
+   "default": "TRV-DPDP",
+   "fieldname": "certificate_prefix",
+   "fieldtype": "Data",
+   "label": "Certificate No. Prefix"
+  },
+  {
+   "default": "12",
+   "description": "0 = never expires. Expired certificates trigger re-certification.",
+   "fieldname": "certificate_validity_months",
+   "fieldtype": "Int",
+   "label": "Validity (months)"
+  },
+  {
+   "fieldname": "cb_cert",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "TRIDASA REALTY VENTURES PVT. LTD. \u00b7 HYDERABAD",
+   "fieldname": "issuer_line",
+   "fieldtype": "Data",
+   "label": "Issuer Line"
+  },
+  {
+   "default": "Data Protection Officer",
+   "fieldname": "signatory_1",
+   "fieldtype": "Data",
+   "label": "Signatory 1"
+  },
+  {
+   "default": "Head \u2013 Human Resources",
+   "fieldname": "signatory_2",
+   "fieldtype": "Data",
+   "label": "Signatory 2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-11-10 13:59:27.883016",
+ "modified_by": "Administrator",
+ "module": "Tridasa LMS",
+ "name": "Training Course",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Training Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "course_name,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "course_name",
+ "track_changes": 1
+}

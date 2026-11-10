@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+	<title>{% block title %}DPDP Academy{% endblock %} · Tridasa</title>
+	<link rel="icon" href="/assets/tridasa_lms/images/tridasa-logo.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+	<link rel="stylesheet" href="/assets/tridasa_lms/css/academy.css?v={{ academy_version }}">
+</head>
+<body>
+<header class="top"><div class="wrap">
+	<a class="brand" href="/training">
+		<span class="logo"><img src="/assets/tridasa_lms/images/tridasa-logo.png" alt="Tridasa, Brightening lives"></span>
+		<span class="tag">DPDP<br>Academy</span>
+	</a>
+	<nav class="tabs" aria-label="Sections">
+		{% block nav %}{% endblock %}
+		{% if frappe.session.user != "Guest" %}
+		<span class="who">{{ frappe.utils.escape_html(user_full_name) }}</span>
+		{% if is_desk_user %}<a href="/app/training-assignment">Desk</a>{% endif %}
+		<a href="/api/method/web_logout">Log out</a>
+		{% else %}
+		<a href="{{ login_url }}">Log in</a>
+		{% endif %}
+	</nav>
+</div></header>
+<main class="wrap">
+{% block content %}{% endblock %}
+</main>
+<footer class="wrap foot"><p class="note">This training summarises the DPDP Act, 2023 and DPDP Rules, 2025 for internal use. It is not legal advice; Tridasa's DPO and legal counsel decide specific cases.</p></footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -247,3 +247,39 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+# ---------------------------------------------------------------- Tridasa LMS
+
+required_apps = ["frappe", "erpnext", "hrms"]
+
+before_install = "tridasa_lms.install.before_install"
+after_install = "tridasa_lms.install.after_install"
+
+app_include_js = "/assets/tridasa_lms/js/desk_training_banner.js"
+
+# Employees who only have a portal login land on their trainings
+role_home_page = {"Training Learner": "training"}
+
+standard_portal_menu_items = [
+	{"title": "My Trainings", "route": "/training", "role": "Training Learner"},
+]
+
+has_website_permission = {
+	"Training Certificate": "tridasa_lms.permissions.certificate_website_permission",
+}
+
+doc_events = {
+	"Employee": {
+		"after_insert": "tridasa_lms.overrides.employee.enroll_new_joiner",
+		"on_update": "tridasa_lms.overrides.employee.on_status_change",
+	},
+}
+
+scheduler_events = {
+	"daily": ["tridasa_lms.tasks.daily"],
+	"hourly": ["tridasa_lms.tasks.hourly"],
+}
+
+jinja = {
+	"methods": ["tridasa_lms.utils.logo_data_uri"],
+}
