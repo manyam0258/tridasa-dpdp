@@ -18,8 +18,9 @@
 	{% if result %}
 		{% if result.found %}
 		<div class="panel">
-			<div class="score"><span class="pill {{ 'ok' if result.status == 'Active' else 'bad' }}">{{ 'VALID' if result.status == 'Active' else result.status|upper }}</span>
-				<span class="mono">{{ result.certificate_no }}</span></div>
+			<div class="verdict {{ '' if result.status == 'Active' else 'bad' }}"><span class="seal" aria-hidden="true">{{ '✓' if result.status == 'Active' else '!' }}</span>
+				<div style="display:grid;gap:6px"><span class="pill {{ 'ok' if result.status == 'Active' else 'bad' }}">{{ 'VALID' if result.status == 'Active' else result.status|upper }}</span>
+				<span class="mono">{{ result.certificate_no }}</span></div></div>
 			<div class="tablebox"><table>
 				<tr><th>Issued to</th><td><b>{{ frappe.utils.escape_html(result.employee_name) }}</b>{% if result.department %} · {{ frappe.utils.escape_html(result.department) }}{% endif %}</td></tr>
 				<tr><th>Course</th><td>{{ frappe.utils.escape_html(result.course_name) }}</td></tr>
@@ -29,7 +30,7 @@
 			{% if result.status != 'Active' %}<p class="err">This certificate is {{ result.status|lower }} and should not be accepted as proof of current training.</p>{% endif %}
 		</div>
 		{% else %}
-		<div class="panel"><p class="err">No certificate with number <span class="mono">{{ frappe.utils.escape_html(query) }}</span> was found. Check the number and try again, or contact Tridasa HR.</p></div>
+		<div class="panel"><div class="verdict bad"><span class="seal" aria-hidden="true">?</span><p class="err" style="flex:1">No certificate with number <span class="mono">{{ frappe.utils.escape_html(query) }}</span> was found. Check the number and try again, or contact Tridasa HR.</p></div></div>
 		{% endif %}
 	{% endif %}
 </section>

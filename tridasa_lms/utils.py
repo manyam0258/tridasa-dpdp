@@ -64,8 +64,19 @@ def portal_context(context, require_login: bool = True):
 	context.user_full_name = frappe.utils.get_fullname(user) if user != "Guest" else ""
 	context.is_desk_user = user != "Guest" and frappe.db.get_value("User", user, "user_type") == "System User"
 	context.csrf_token = frappe.sessions.get_csrf_token() if user != "Guest" else ""
-	context.academy_version = tridasa_lms.__version__
+	context.academy_version = asset_version(tridasa_lms.__version__)
 	return context
+
+
+def asset_version(app_version: str) -> str:
+	"""Cache-busting token for portal CSS/JS: app version plus the newest asset mtime."""
+	public = os.path.join(frappe.get_app_path("tridasa_lms"), "public")
+	files = ("css/academy.css", "js/academy_course.js", "images/skyline-night.svg")
+	try:
+		stamp = max(int(os.path.getmtime(os.path.join(public, f))) for f in files)
+	except OSError:
+		return app_version
+	return f"{app_version}-{stamp}"
 
 
 def safe_sendmail(**kwargs) -> bool:

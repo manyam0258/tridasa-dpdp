@@ -87,14 +87,14 @@
 	function journey(current) {
 		const a = S.assignment;
 		const steps = [
-			{ key: "slides", label: "1 · Read the slides", sub: `${a.chapters_read || 0} of ${S.chapters.length} read`, done: slidesDone(), href: `#slide-${nextUnread() || 1}`, open: true },
-			{ key: "assessment", label: "2 · Pass the assessment", sub: certified() ? `Passed · best ${pct(a.best_score)}` : `${S.course.questions} questions · pass ${pct(S.course.pass_percentage)}`, done: certified(), href: "#assessment", open: slidesDone() },
-			{ key: "certificate", label: "3 · Get your certificate", sub: S.certificate ? S.certificate.name : "Issued instantly on passing", done: !!S.certificate, href: "#certificate", open: !!S.certificate },
+			{ key: "slides", n: 1, label: "Read the slides", sub: `${a.chapters_read || 0} of ${S.chapters.length} read`, done: slidesDone(), href: `#slide-${nextUnread() || 1}`, open: true },
+			{ key: "assessment", n: 2, label: "Pass the assessment", sub: certified() ? `Passed · best ${pct(a.best_score)}` : `${S.course.questions} questions · pass ${pct(S.course.pass_percentage)}`, done: certified(), href: "#assessment", open: slidesDone() },
+			{ key: "certificate", n: 3, label: "Get your certificate", sub: S.certificate ? S.certificate.name : "Issued instantly on passing", done: !!S.certificate, href: "#certificate", open: !!S.certificate },
 		];
 		return `<nav class="journey" aria-label="Your progress">${steps
 			.map((s) => {
 				const cls = [s.done ? "done" : "", s.key === current ? "current" : "", s.open ? "" : "locked"].join(" ");
-				const inner = `<b>${s.done ? "✓ " : ""}${esc(s.label)}</b><span>${esc(s.sub)}</span>`;
+				const inner = `<span class="node" aria-hidden="true">${s.done ? "✓" : s.n}</span><b>${esc(s.label)}</b><span>${esc(s.sub)}</span>`;
 				return s.open ? `<a class="${cls}" href="${s.href}">${inner}</a>` : `<span class="${cls}" aria-disabled="true">${inner}</span>`;
 			})
 			.join("")}</nav>`;
@@ -125,7 +125,7 @@
 			<div class="hero-split"><div class="hero">
 				<h1>${esc(c.course_name)}</h1>
 				${c.introduction || ""}
-			</div><img class="skyline" src="/assets/tridasa_lms/images/skyline.svg" alt=""></div>
+			</div><img class="skyline" src="/assets/tridasa_lms/images/skyline-night.svg" alt=""></div>
 			${banner}
 			${journey("")}
 			<div class="stats facts">
@@ -156,7 +156,7 @@
 					.map((c) => `<button type="button" data-n="${c.idx}" class="${c.read ? "read" : ""}" aria-current="${c.idx === n}" ${c.idx > limit ? "disabled" : ""}><span class="ix">${c.idx}</span><span>${esc(c.title)}</span></button>`)
 					.join("")}</nav>
 				<div>
-					<article class="slide"><div class="ch">
+					<article class="slide" style="--read:${Math.round((n / total) * 100)}%"><div class="ch">
 						<span class="num">Slide ${n} of ${total}</span>
 						<h2>${esc(ch.title)}</h2>
 						${ch.content}
@@ -164,7 +164,7 @@
 					<p class="err" id="err" hidden></p>
 					<div class="slide-nav">
 						${n > 1 ? `<a class="btn ghost" href="#slide-${n - 1}">← Previous</a>` : `<a class="btn ghost" href="#overview">Overview</a>`}
-						<span class="slide-count">${S.assignment.chapters_read || 0}/${total} read</span>
+						<span class="slide-count"><span>${S.assignment.chapters_read || 0}/${total} read</span><span class="keys"><kbd>←</kbd> <kbd>→</kbd> to move</span></span>
 						<button class="btn sun" type="button" id="nextBtn">${nextLabel}</button>
 					</div>
 				</div>
@@ -336,7 +336,7 @@
 		root.innerHTML = `<section class="view">
 			${journey("assessment")}
 			<div class="panel">
-				<div class="score"><span class="big">${esc(r.correct)}/${esc(r.total)}</span>
+				<div class="score"><div class="ring ${passed ? "ok" : ""}" style="--p:${Math.round(r.score || 0)}"><span class="big">${esc(r.correct)}/${esc(r.total)}</span></div>
 					<div style="display:grid;gap:6px"><span class="pill ${passed ? "ok" : "bad"}">${passed ? "PASSED" : "NOT PASSED"}</span>
 					<span class="note">Score ${pct(r.score)} · pass mark ${pct(r.pass_percentage)}</span></div></div>
 				<p>${msg}</p>
@@ -393,6 +393,19 @@
 		};
 	}
 
+	/* ------------------------------------------------ keyboard: ← / → on slides (same as the buttons) */
+	function slideKeys(e) {
+		if (!/^#slide-\d+$/.test(location.hash) || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+		if (e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
+		if (e.key === "ArrowRight") {
+			const next = $("#nextBtn");
+			if (next && !next.disabled) { e.preventDefault(); next.click(); }
+		} else if (e.key === "ArrowLeft") {
+			const prev = root.querySelector(".slide-nav a.ghost");
+			if (prev) { e.preventDefault(); prev.click(); }
+		}
+	}
+
 	/* ------------------------------------------------ boot */
 	(async () => {
 		if (!ASSIGNMENT) return fail(new Error("No training was specified. Open it from your trainings list."));
@@ -400,6 +413,7 @@
 			S = await call("get_course_player", { assignment: ASSIGNMENT });
 			paper = S.open_attempt;
 			addEventListener("hashchange", route);
+			addEventListener("keydown", slideKeys);
 			route();
 		} catch (e) { fail(e); }
 	})();
