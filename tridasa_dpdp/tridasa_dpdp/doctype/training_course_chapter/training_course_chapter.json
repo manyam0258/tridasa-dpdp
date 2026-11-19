@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-11-10 13:59:27.491943",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "chapter_title",
+  "estimated_minutes",
+  "content"
+ ],
+ "fields": [
+  {
+   "columns": 6,
+   "fieldname": "chapter_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Slide Title",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "default": "2",
+   "fieldname": "estimated_minutes",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Est. Minutes"
+  },
+  {
+   "description": "HTML shown on the slide. Classes from the Tridasa playbook (callout, tablebox, cols2, box do/dont, steps, ref) are styled.",
+   "fieldname": "content",
+   "fieldtype": "HTML Editor",
+   "label": "Content",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-10 13:59:27.491943",
+ "modified_by": "Administrator",
+ "module": "Tridasa DPDP",
+ "name": "Training Course Chapter",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

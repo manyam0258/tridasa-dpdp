@@ -1,9 +1,0 @@
-{% extends "templates/academy_base.html" %}
-{% block title %}Training{% endblock %}
-{% block nav %}<a href="/training">My Trainings</a>{% endblock %}
-{% block content %}
-<div id="app" data-assignment="{{ frappe.utils.escape_html(assignment) }}" data-csrf="{{ csrf_token }}">
-	<div class="skeleton"><p>Loading your training…</p></div>
-</div>
-{% endblock %}
-{% block scripts %}<script src="/assets/tridasa_lms/js/academy_course.js?v={{ academy_version }}"></script>{% endblock %}

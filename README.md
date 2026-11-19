@@ -1,4 +1,4 @@
-## Tridasa LMS
+## Tridasa DPDP
 
 DPDP Act awareness training for Tridasa employees: invite staff from ERPNext/HRMS, they read the playbook slides, pass a randomised assessment, and get a verifiable certificate. HR tracks who has completed each step.
 
@@ -30,12 +30,12 @@ Requires `erpnext` and `hrms`.
 
 - Configure a default outgoing **Email Account**. Without one, enrolment still works, but emails are logged in Error Log instead of being sent.
 - Set `host_name` in site config so links in emails and on certificates use your real domain.
-- Sample data: `bench --site <site> execute tridasa_lms.demo.make_demo`
+- Sample data: `bench --site <site> execute tridasa_dpdp.demo.make_demo`
 
 ### Tests
 
 Run the tests on a separate test site that has erpnext, hrms and this app installed:
 
 ```
-bench --site <test-site> run-tests --app tridasa_lms
+bench --site <test-site> run-tests --app tridasa_dpdp
 ```
