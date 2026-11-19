@@ -6,11 +6,12 @@ Requires `erpnext` and `hrms`.
 
 ### Flow
 
-1. **HR invites.** Open **Training Course → DPDP-2026 → Actions → Invite Employees**. Filter by company, department, branch or designation, or pick people. Each active employee gets an assignment and an email. Employees without a login get a portal-only login and a set-password link. New joiners are invited automatically.
-2. **The employee reads the slides** at `/training`. There are 15 slides from the playbook, read in order, with progress saved on the server.
-3. **The employee takes the assessment.** It has 10 questions, one per topic, drawn from a 40-question bank, with options shuffled. Questions the employee has already seen are avoided. The pass mark is 80%, the time limit is 20 minutes and they get 3 attempts. Answers are graded on the server and are never sent to the browser before submit.
-4. **Certificate.** It is issued as soon as they pass and emailed as a PDF. It is valid for 12 months. Anyone can check it at `/training/verify`.
-5. **Follow-up.** Reminders go out every 3 days. Overdue training is escalated to the employee's reporting manager. Expired certificates trigger re-certification. Employees who leave are removed from the pending counts.
+1. **Everyone is assigned automatically.** With **Assign to All Active Employees** ticked on the course (the default), every active employee is enrolled and emailed when the course is published, after every `bench migrate` (so each deploy covers everyone), and daily for anyone added or re-activated later. HR can also press **Actions → Assign to All Active Employees**. Assignments HR cancelled are not reopened.
+2. **HR can also invite selectively.** Open **Training Course → DPDP-2026 → Actions → Invite Employees**. Filter by company, department, branch or designation, or pick people. Each active employee gets an assignment and an email. Employees without a login get a portal-only login and a set-password link. New joiners are invited automatically.
+3. **The employee reads the slides** at `/training`. With **Open Training Right After Login** ticked (the default), anyone with this training pending is taken straight to it when they log in, whether they use the portal or the Desk. A link the user clicked on purpose (`?redirect-to=`) still wins. There are 15 slides from the playbook, read in order, with progress saved on the server.
+4. **The employee takes the assessment.** It has 10 questions, one per topic, drawn from a 40-question bank, with options shuffled. Questions the employee has already seen are avoided. The pass mark is 80%, the time limit is 20 minutes and they get 3 attempts. Answers are graded on the server and are never sent to the browser before submit.
+5. **Certificate.** It is issued as soon as they pass and emailed as a PDF. It is valid for 12 months. Anyone can check it at `/training/verify`.
+6. **Follow-up.** Reminders go out every 3 days. Overdue training is escalated to the employee's reporting manager. Expired certificates trigger re-certification. Employees who leave are removed from the pending counts.
 
 ### Admin views
 

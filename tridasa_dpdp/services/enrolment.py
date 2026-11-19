@@ -286,3 +286,45 @@ def get_matching_employees(company=None, department=None, branch=None, designati
 	if employees:
 		filters["name"] = ("in", employees)
 	return frappe.get_all("Employee", filters=filters, pluck="name", order_by="employee_name asc")
+
+
+# ---------------------------------------------------------------- assign to everyone
+
+
+def assign_all_active(course: str | None = None) -> dict:
+	"""Enrol every active employee who has no assignment yet in each course set to
+	'Assign to All Active Employees'. Employees HR cancelled are left alone."""
+	filters = {"status": "Published", "assign_to_all_active": 1}
+	if course:
+		filters["name"] = course
+	results = {}
+	for c in frappe.get_all("Training Course", filters=filters, fields=["name", "company"]):
+		enrolled = set(frappe.get_all("Training Assignment", filters={"course": c.name}, pluck="employee"))
+		pending = [e for e in get_matching_employees(company=c.company) if e not in enrolled]
+		if pending:
+			results[c.name] = invite_employees(c.name, pending)
+			frappe.db.commit()  # long runs: keep progress if a later invite fails
+	return results
+
+
+def enqueue_assign_all(course: str | None = None):
+	"""Background, de-duplicated. Used on publish and after every migrate (i.e. each deploy)."""
+	if frappe.flags.in_test:
+		return
+	try:
+		frappe.enqueue(
+			"tridasa_dpdp.services.enrolment.assign_all_active",
+			queue="long",
+			timeout=3600,
+			course=course,
+			job_id=f"tridasa_dpdp:assign_all:{course or 'all'}",
+			deduplicate=True,
+			enqueue_after_commit=True,
+		)
+	except Exception:
+		# Never fail an install/migrate over this; the daily job will catch up
+		frappe.log_error(title="Tridasa DPDP: could not queue assign-all job")
+
+
+def after_migrate():
+	enqueue_assign_all()

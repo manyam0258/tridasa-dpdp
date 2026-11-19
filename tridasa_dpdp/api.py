@@ -207,6 +207,32 @@ def _invite_in_background(course, employees, due_in_days, requested_by):
 
 
 @frappe.whitelist(methods=["POST"])
+def assign_all_now(course: str) -> dict:
+	"""Enrol every active employee not yet in this course (runs in the background)."""
+	frappe.only_for(MANAGER_ROLES)
+	doc = frappe.get_doc("Training Course", course)
+	if doc.status != "Published":
+		frappe.throw(_("Publish the course first."))
+	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
+	pending = [e for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled]
+	if not pending:
+		return {"pending": 0}
+	frappe.enqueue(
+		"tridasa_dpdp.api._invite_in_background",
+		queue="long",
+		timeout=3600,
+		course=course,
+		employees=pending,
+		due_in_days=None,
+		requested_by=frappe.session.user,
+		job_id=f"tridasa_dpdp:assign_all:{course}",
+		deduplicate=True,
+		enqueue_after_commit=True,
+	)
+	return {"pending": len(pending), "queued": True}
+
+
+@frappe.whitelist(methods=["POST"])
 def send_reminders_now(course: str) -> dict:
 	frappe.only_for(MANAGER_ROLES)
 	return {"sent": enrolment.send_due_reminders(course=course, force=True)}

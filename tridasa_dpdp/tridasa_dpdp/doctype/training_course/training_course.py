@@ -38,6 +38,18 @@ class TrainingCourse(Document):
 			doc.flags.ignore_permissions = True
 			doc.save()
 
+		# Publishing (or switching on 'Assign to All') enrols every active employee
+		if self.status == "Published" and self.assign_to_all_active and (
+			self.has_value_changed("status") or self.has_value_changed("assign_to_all_active")
+		):
+			from tridasa_dpdp.services.enrolment import enqueue_assign_all
+
+			enqueue_assign_all(self.name)
+			frappe.msgprint(
+				_("All active employees are being enrolled in the background and will receive an invitation email."),
+				alert=True,
+			)
+
 
 def refresh_question_count(course: str):
 	count = frappe.db.count("Training Question", {"course": course, "enabled": 1})

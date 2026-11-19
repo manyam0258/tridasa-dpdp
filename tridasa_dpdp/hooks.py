@@ -275,6 +275,12 @@ doc_events = {
 	},
 }
 
+# Employees with pending training land on it right after login
+on_login = "tridasa_dpdp.overrides.login.redirect_to_pending_training"
+
+# Every deploy (bench migrate) enrols active employees who aren't enrolled yet
+after_migrate = "tridasa_dpdp.services.enrolment.after_migrate"
+
 scheduler_events = {
 	"daily": ["tridasa_dpdp.tasks.daily"],
 	"hourly": ["tridasa_dpdp.tasks.hourly"],

@@ -8,15 +8,19 @@ from tridasa_dpdp.utils import OPEN_STATUSES
 
 
 def enroll_new_joiner(doc, method=None):
-	if doc.status != "Active":
-		return
-	for name in frappe.get_all(
-		"Training Course", filters={"status": "Published", "auto_enroll_new_joiners": 1}, pluck="name"
-	):
+	if doc.status == "Active":
+		_enqueue_invites(doc.name)
+
+
+def _enqueue_invites(employee: str):
+	courses = set(
+		frappe.get_all("Training Course", filters={"status": "Published", "auto_enroll_new_joiners": 1}, pluck="name")
+	) | set(frappe.get_all("Training Course", filters={"status": "Published", "assign_to_all_active": 1}, pluck="name"))
+	for name in courses:
 		frappe.enqueue(
 			"tridasa_dpdp.overrides.employee._invite",
 			course=name,
-			employee=doc.name,
+			employee=employee,
 			enqueue_after_commit=True,
 		)
 
@@ -28,8 +32,11 @@ def _invite(course, employee):
 
 
 def on_status_change(doc, method=None):
-	"""Employees who leave drop out of the pending numbers."""
-	if not doc.has_value_changed("status") or doc.status == "Active":
+	"""Employees who leave drop out of the pending numbers; re-activated ones are invited again."""
+	if not doc.has_value_changed("status"):
+		return
+	if doc.status == "Active":
+		_enqueue_invites(doc.name)  # invite_employee re-opens their cancelled assignment
 		return
 	for name in frappe.get_all(
 		"Training Assignment", filters={"employee": doc.name, "status": ("in", OPEN_STATUSES)}, pluck="name"

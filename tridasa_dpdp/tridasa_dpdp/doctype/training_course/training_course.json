@@ -30,6 +30,8 @@
   "due_in_days",
   "reminder_every_days",
   "cb_enrol",
+  "assign_to_all_active",
+  "redirect_on_login",
   "escalate_to_manager",
   "auto_enroll_new_joiners",
   "sb_cert",
@@ -182,6 +184,20 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "assign_to_all_active",
+   "fieldtype": "Check",
+   "label": "Assign to All Active Employees",
+   "default": "1",
+   "description": "Every active employee is enrolled and emailed automatically: when the course is published, after every deploy/migrate, and daily for anyone added or re-activated later."
+  },
+  {
+   "fieldname": "redirect_on_login",
+   "fieldtype": "Check",
+   "label": "Open Training Right After Login",
+   "default": "1",
+   "description": "Employees with this training pending are taken straight to it when they log in (portal and Desk users)."
+  },
+  {
    "default": "1",
    "fieldname": "escalate_to_manager",
    "fieldtype": "Check",
@@ -189,7 +205,7 @@
   },
   {
    "default": "1",
-   "description": "Invite every new Employee automatically while the course is Published.",
+   "description": "Invite every new Employee automatically while the course is Published (always on when 'Assign to All Active Employees' is ticked).",
    "fieldname": "auto_enroll_new_joiners",
    "fieldtype": "Check",
    "label": "Auto-invite New Joiners"
@@ -229,7 +245,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "TRIDASA REALTY VENTURES PVT. LTD. \u00b7 HYDERABAD",
+   "default": "TRIDASA REALTY VENTURES PVT. LTD. · HYDERABAD",
    "fieldname": "issuer_line",
    "fieldtype": "Data",
    "label": "Issuer Line"
@@ -241,7 +257,7 @@
    "label": "Signatory 1"
   },
   {
-   "default": "Head \u2013 Human Resources",
+   "default": "Head – Human Resources",
    "fieldname": "signatory_2",
    "fieldtype": "Data",
    "label": "Signatory 2"

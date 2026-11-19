@@ -64,3 +64,50 @@ class TestTrainingFlow(IntegrationTestCase):
 	def test_other_users_cannot_access(self):
 		frappe.set_user("Guest")
 		self.assertRaises(frappe.PermissionError, api.get_course_player, self.assignment)
+
+
+class TestAssignAllAndLoginRedirect(IntegrationTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		cls.course = create_dpdp_course()
+
+	def tearDown(self):
+		frappe.set_user("Administrator")
+
+	def test_assign_all_active_enrols_unassigned_employees(self):
+		from tridasa_dpdp.services.enrolment import assign_all_active
+
+		emp = make_employee("lms.everyone@example.com", company=frappe.db.get_value("Company", {}, "name"))
+		frappe.db.delete("Training Assignment", {"employee": emp})
+		assign_all_active(self.course)
+		self.assertTrue(frappe.db.exists("Training Assignment", {"course": self.course, "employee": emp}))
+
+	def test_cancelled_assignment_is_not_reopened(self):
+		from tridasa_dpdp.services.enrolment import assign_all_active
+
+		emp = make_employee("lms.exempt@example.com", company=frappe.db.get_value("Company", {}, "name"))
+		assign_all_active(self.course)
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+		frappe.db.set_value("Training Assignment", name, "status", "Cancelled")
+		assign_all_active(self.course)
+		self.assertEqual(frappe.db.get_value("Training Assignment", name, "status"), "Cancelled")
+
+	def test_login_redirects_to_pending_training(self):
+		from tridasa_dpdp.overrides.login import redirect_to_pending_training
+		from tridasa_dpdp.services.enrolment import assign_all_active
+
+		user = "lms.redirect@example.com"
+		emp = make_employee(user, company=frappe.db.get_value("Company", {}, "name"))
+		assign_all_active(self.course)
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+
+		frappe.local.form_dict = frappe._dict()
+		frappe.cache.hdel("redirect_after_login", user)
+		redirect_to_pending_training(frappe._dict(user=user))
+		self.assertEqual(frappe.cache.hget("redirect_after_login", user), f"/training/course?a={name}")
+
+		frappe.cache.hdel("redirect_after_login", user)
+		frappe.local.form_dict = frappe._dict(redirect_to="/app/todo")
+		redirect_to_pending_training(frappe._dict(user=user))
+		self.assertIsNone(frappe.cache.hget("redirect_after_login", user))

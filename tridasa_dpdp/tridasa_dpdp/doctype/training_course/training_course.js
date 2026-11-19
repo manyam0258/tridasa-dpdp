@@ -16,6 +16,7 @@ frappe.ui.form.on("Training Course", {
 		frm.add_custom_button(__("Preview a Paper"), () => preview_paper(frm), __("View"));
 
 		if (frm.doc.status === "Published") {
+			frm.add_custom_button(__("Assign to All Active Employees"), () => assign_all(frm), __("Actions"));
 			frm.add_custom_button(__("Invite Employees"), () => invite_dialog(frm), __("Actions"));
 			frm.add_custom_button(__("Send Reminders Now"), () =>
 				frappe.confirm(__("Email every employee who hasn't finished this course?"), () =>
@@ -147,4 +148,17 @@ function preview_paper(frm) {
 			.join("");
 		frappe.msgprint({ title: __("Sample paper with answer key"), message: html, wide: true });
 	});
+}
+
+function assign_all(frm) {
+	frappe.confirm(
+		__("Enrol every active employee who isn't in this course yet, and email each of them an invitation?"),
+		() =>
+			frappe.call("tridasa_dpdp.api.assign_all_now", { course: frm.doc.name }).then(({ message }) => {
+				if (!message.pending) return frappe.msgprint(__("Every active employee is already enrolled."));
+				frappe.msgprint(
+					__("Enrolling {0} employees in the background. You'll see a summary here when it's done.", [message.pending])
+				);
+			})
+	);
 }
