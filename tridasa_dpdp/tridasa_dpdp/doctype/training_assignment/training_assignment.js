@@ -7,9 +7,9 @@ frappe.ui.form.on("Training Assignment", {
 		if (frm.is_new()) return;
 		const open = ["Invited", "In Progress", "Course Completed", "Assessment Failed"].includes(frm.doc.status);
 		if (open) {
-			frm.add_custom_button(__("Send Reminder"), () =>
+			frm.add_custom_button(frm.doc.invitation_emailed_on ? __("Send Reminder") : __("Send Invitation Email"), () =>
 				frm.call("resend_invite").then(() => {
-					frappe.show_alert({ message: __("Reminder sent to {0}", [frm.doc.email]), indicator: "green" });
+					frappe.show_alert({ message: __("Email sent"), indicator: "green" });
 					frm.reload_doc();
 				})
 			);

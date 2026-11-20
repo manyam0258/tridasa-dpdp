@@ -23,6 +23,7 @@ ASYNC_INVITE_THRESHOLD = 25
 @frappe.whitelist()
 def get_my_trainings() -> list[dict]:
 	_require_login()
+	enrolment.link_user_assignments(frappe.session.user)
 	rows = frappe.get_all(
 		"Training Assignment",
 		filters={"user": frappe.session.user, "status": ("!=", "Cancelled")},
@@ -174,8 +175,10 @@ def invite_employees(
 	designation: str | None = None,
 	employees: str | list | None = None,
 	due_in_days: int | None = None,
+	send_email: int | bool = 1,
 ) -> dict:
 	frappe.only_for(MANAGER_ROLES)
+	notify = bool(cint(send_email))
 	if isinstance(employees, str):
 		employees = json.loads(employees) if employees else None
 	targets = enrolment.get_matching_employees(company, department, branch, designation, employees)
@@ -192,15 +195,17 @@ def invite_employees(
 			employees=targets,
 			due_in_days=due,
 			requested_by=frappe.session.user,
+			notify=notify,
 			enqueue_after_commit=True,
 		)
 		return {"matched": len(targets), "queued": True}
 
-	return {"matched": len(targets), **enrolment.invite_employees(course, targets, due)}
+	return {"matched": len(targets), "notified": notify, **enrolment.invite_employees(course, targets, due, notify=notify)}
 
 
-def _invite_in_background(course, employees, due_in_days, requested_by):
-	summary = enrolment.invite_employees(course, employees, due_in_days)
+def _invite_in_background(course, employees, due_in_days, requested_by, notify=True):
+	summary = enrolment.invite_employees(course, employees, due_in_days, notify=notify)
+	summary["notified"] = notify
 	frappe.publish_realtime(
 		"tridasa_dpdp_invites_done", {"course": course, **summary}, user=requested_by, after_commit=True
 	)
@@ -208,7 +213,7 @@ def _invite_in_background(course, employees, due_in_days, requested_by):
 
 @frappe.whitelist(methods=["POST"])
 def assign_all_now(course: str) -> dict:
-	"""Enrol every active employee not yet in this course (runs in the background)."""
+	"""Assign every active employee not yet in this course, silently (runs in the background)."""
 	frappe.only_for(MANAGER_ROLES)
 	doc = frappe.get_doc("Training Course", course)
 	if doc.status != "Published":
@@ -225,11 +230,53 @@ def assign_all_now(course: str) -> dict:
 		employees=pending,
 		due_in_days=None,
 		requested_by=frappe.session.user,
+		notify=False,
 		job_id=f"tridasa_dpdp:assign_all:{course}",
 		deduplicate=True,
 		enqueue_after_commit=True,
 	)
 	return {"pending": len(pending), "queued": True}
+
+
+@frappe.whitelist()
+def get_invitation_counts(course: str) -> dict:
+	"""For the Email Invitations dialog."""
+	frappe.only_for(MANAGER_ROLES)
+	base = {"course": course, "status": ("in", OPEN_STATUSES)}
+	return {
+		"not_emailed": frappe.db.count("Training Assignment", {**base, "invitation_emailed_on": ("is", "not set")}),
+		"open": frappe.db.count("Training Assignment", base),
+	}
+
+
+@frappe.whitelist(methods=["POST"])
+def email_invitations(course: str, scope: str = "not_emailed", department: str | None = None) -> dict:
+	"""HR chooses when everyone gets emailed. Runs in the background."""
+	frappe.only_for(MANAGER_ROLES)
+	if scope not in ("not_emailed", "open"):
+		frappe.throw(_("Unknown recipient group."))
+	if frappe.db.get_value("Training Course", course, "status") != "Published":
+		frappe.throw(_("Publish the course first."))
+	frappe.enqueue(
+		"tridasa_dpdp.api._email_in_background",
+		queue="long",
+		timeout=3600,
+		course=course,
+		scope=scope,
+		department=department or None,
+		requested_by=frappe.session.user,
+		job_id=f"tridasa_dpdp:email_invitations:{course}",
+		deduplicate=True,
+		enqueue_after_commit=True,
+	)
+	return {"queued": True}
+
+
+def _email_in_background(course, scope, department, requested_by):
+	summary = enrolment.email_invitations(course, scope, department)
+	frappe.publish_realtime(
+		"tridasa_dpdp_emails_done", {"course": course, **summary}, user=requested_by, after_commit=True
+	)
 
 
 @frappe.whitelist(methods=["POST"])
@@ -286,6 +333,7 @@ def get_pending_for_session() -> list[dict]:
 	"""Used by the Desk banner: open trainings for the logged-in user."""
 	if frappe.session.user == "Guest":
 		return []
+	enrolment.link_user_assignments(frappe.session.user)
 	return frappe.get_all(
 		"Training Assignment",
 		filters={"user": frappe.session.user, "status": ("in", OPEN_STATUSES)},
@@ -304,6 +352,8 @@ def _require_login():
 def _my_assignment(name: str):
 	_require_login()
 	doc = frappe.get_doc("Training Assignment", name)
+	if doc.user != frappe.session.user and enrolment.link_user_assignments(frappe.session.user):
+		doc.reload()  # their Employee was linked to this login after the assignment was made
 	if doc.user != frappe.session.user:
 		raise frappe.PermissionError(_("This training is assigned to someone else."))
 	if doc.status == "Cancelled":

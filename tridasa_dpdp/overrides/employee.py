@@ -28,11 +28,17 @@ def _enqueue_invites(employee: str):
 def _invite(course, employee):
 	from tridasa_dpdp.services.enrolment import invite_employee
 
-	invite_employee(frappe.get_doc("Training Course", course), employee)
+	# Silent: HR sends invitation emails when they choose ("Email Invitations")
+	invite_employee(frappe.get_doc("Training Course", course), employee, notify=False)
 
 
 def on_status_change(doc, method=None):
-	"""Employees who leave drop out of the pending numbers; re-activated ones are invited again."""
+	"""Employees who leave drop out of the pending numbers; re-activated ones are assigned
+	again. A login linked to the employee later picks up their assignments."""
+	if doc.user_id and doc.has_value_changed("user_id"):
+		from tridasa_dpdp.services.enrolment import link_user_assignments
+
+		link_user_assignments(doc.user_id)
 	if not doc.has_value_changed("status"):
 		return
 	if doc.status == "Active":

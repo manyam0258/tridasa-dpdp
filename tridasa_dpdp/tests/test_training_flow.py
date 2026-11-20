@@ -80,8 +80,22 @@ class TestAssignAllAndLoginRedirect(IntegrationTestCase):
 
 		emp = make_employee("lms.everyone@example.com", company=frappe.db.get_value("Company", {}, "name"))
 		frappe.db.delete("Training Assignment", {"employee": emp})
+		emails_before = frappe.db.count("Email Queue")
 		assign_all_active(self.course)
-		self.assertTrue(frappe.db.exists("Training Assignment", {"course": self.course, "employee": emp}))
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+		self.assertTrue(name)
+		# Silent: no email queued, not marked as invited
+		self.assertEqual(frappe.db.count("Email Queue"), emails_before)
+		self.assertFalse(frappe.db.get_value("Training Assignment", name, "invitation_emailed_on"))
+
+	def test_uninvited_assignments_get_no_reminders(self):
+		from tridasa_dpdp.services.enrolment import assign_all_active, send_due_reminders
+
+		emp = make_employee("lms.quiet@example.com", company=frappe.db.get_value("Company", {}, "name"))
+		assign_all_active(self.course)
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+		send_due_reminders(course=self.course, force=True)
+		self.assertEqual(frappe.db.get_value("Training Assignment", name, "reminders_sent"), 0)
 
 	def test_cancelled_assignment_is_not_reopened(self):
 		from tridasa_dpdp.services.enrolment import assign_all_active

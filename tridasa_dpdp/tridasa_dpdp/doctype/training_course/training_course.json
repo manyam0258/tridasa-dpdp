@@ -188,7 +188,7 @@
    "fieldtype": "Check",
    "label": "Assign to All Active Employees",
    "default": "1",
-   "description": "Every active employee is enrolled and emailed automatically: when the course is published, after every deploy/migrate, and daily for anyone added or re-activated later."
+   "description": "Every active employee is assigned automatically (no email): when the course is published, after every deploy/migrate, and daily for anyone added or re-activated later. Send emails when you choose with Actions → Email Invitations."
   },
   {
    "fieldname": "redirect_on_login",
@@ -205,7 +205,7 @@
   },
   {
    "default": "1",
-   "description": "Invite every new Employee automatically while the course is Published (always on when 'Assign to All Active Employees' is ticked).",
+   "description": "Assign every new Employee automatically (no email) while the course is Published. Always on when 'Assign to All Active Employees' is ticked.",
    "fieldname": "auto_enroll_new_joiners",
    "fieldtype": "Check",
    "label": "Auto-invite New Joiners"

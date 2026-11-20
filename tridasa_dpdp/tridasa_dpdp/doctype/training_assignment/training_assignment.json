@@ -43,6 +43,7 @@
   "last_score",
   "certificate",
   "sb_notify",
+  "invitation_emailed_on",
   "reminders_sent",
   "last_reminder_on",
   "cb_notify",
@@ -190,7 +191,7 @@
   {
    "fieldname": "invited_on",
    "fieldtype": "Datetime",
-   "label": "Invited On",
+   "label": "Assigned On",
    "read_only": 1
   },
   {
@@ -285,6 +286,13 @@
    "fieldname": "sb_notify",
    "fieldtype": "Section Break",
    "label": "Notifications"
+  },
+  {
+   "fieldname": "invitation_emailed_on",
+   "fieldtype": "Datetime",
+   "label": "Invitation Emailed On",
+   "read_only": 1,
+   "description": "Empty until HR sends the invitation email. Reminders and manager escalations only go to employees who were invited by email."
   },
   {
    "fieldname": "reminders_sent",

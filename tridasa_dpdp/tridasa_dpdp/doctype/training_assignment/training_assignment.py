@@ -85,15 +85,27 @@ class TrainingAssignment(Document):
 
 	@frappe.whitelist()
 	def resend_invite(self):
+		"""Email this employee now: the invitation if they've never had one, else a reminder."""
 		frappe.only_for(("Training Manager", "System Manager"))
-		from tridasa_dpdp.services.enrolment import make_password_link, send_assignment_email
+		from tridasa_dpdp.services.enrolment import EMPLOYEE_FIELDS, ensure_user, send_assignment_email
 
 		if not self.can_still_finish():
 			frappe.throw(_("Nothing to remind about: status is {0}.").format(self.status))
-		link = make_password_link(self.user) if not frappe.db.get_value("User", self.user, "last_login") else None
-		if not send_assignment_email(self, kind="overdue" if self.overdue else "reminder", password_link=link):
+		emp = frappe.db.get_value("Employee", self.employee, EMPLOYEE_FIELDS, as_dict=True)
+		user, _created, link = ensure_user(emp)  # creates a portal login if they have none
+		if not user:
+			frappe.throw(_("{0} has no email address. Add one on the Employee record first.").format(self.employee_name))
+		if self.user != user:
+			self.db_set({"user": user, "email": frappe.db.get_value("User", user, "email")})
+
+		first_time = not self.invitation_emailed_on
+		kind = "invite" if first_time else ("overdue" if self.overdue else "reminder")
+		if not send_assignment_email(self, kind=kind, password_link=link):
 			frappe.throw(_("The email could not be sent. Set up a default outgoing Email Account first."))
-		self.db_set({"reminders_sent": (self.reminders_sent or 0) + 1, "last_reminder_on": now_datetime()})
+		if first_time:
+			self.db_set("invitation_emailed_on", now_datetime())
+		else:
+			self.db_set({"reminders_sent": (self.reminders_sent or 0) + 1, "last_reminder_on": now_datetime()})
 
 	@frappe.whitelist()
 	def cancel_assignment(self, reason: str):

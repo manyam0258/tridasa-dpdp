@@ -13,6 +13,9 @@ def redirect_to_pending_training(login_manager):
 		user = login_manager.user
 		if user in ("Administrator", "Guest"):
 			return
+		from tridasa_dpdp.services.enrolment import link_user_assignments
+
+		link_user_assignments(user)  # their Employee may have been linked to this login after assignment
 		if frappe.form_dict.get("redirect_to"):
 			return  # they followed a specific link; respect it
 		target = get_pending_training(user)
