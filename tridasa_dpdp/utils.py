@@ -12,6 +12,11 @@ MANAGER_ROLES = ("Training Manager", "System Manager")
 OPEN_STATUSES = ("Invited", "In Progress", "Course Completed", "Assessment Failed")
 
 
+def same_user(a: str | None, b: str | None) -> bool:
+	"""User IDs are emails; the database matches them ignoring case, so Python must too."""
+	return bool(a and b) and a.strip().lower() == b.strip().lower()
+
+
 def course_url(assignment: str) -> str:
 	return get_url(f"{TRAINING_ROUTE}/course?a={assignment}")
 

@@ -12,7 +12,7 @@ from frappe.rate_limiter import rate_limit
 from frappe.utils import cint, format_date
 
 from tridasa_dpdp.services import assessment, enrolment
-from tridasa_dpdp.utils import MANAGER_ROLES, OPEN_STATUSES, attempts_left, is_training_manager
+from tridasa_dpdp.utils import MANAGER_ROLES, OPEN_STATUSES, attempts_left, is_training_manager, same_user
 
 ASYNC_INVITE_THRESHOLD = 25
 
@@ -127,7 +127,7 @@ def submit_attempt(attempt: str, answers: str | dict) -> dict:
 @frappe.whitelist()
 def download_certificate(name: str):
 	cert = frappe.get_doc("Training Certificate", name)
-	if cert.user != frappe.session.user and not is_training_manager():
+	if not same_user(cert.user, frappe.session.user) and not is_training_manager():
 		raise frappe.PermissionError
 	if cert.status == "Revoked":
 		frappe.throw(_("This certificate has been revoked."))
@@ -240,7 +240,7 @@ def _count_unassigned(course: str) -> int:
 	doc = frappe.get_doc("Training Course", course)
 	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
 	employees = sum(1 for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled)
-	return employees + (0 if doc.company else len(enrolment.unassigned_users(course)))
+	return employees + len(enrolment.unassigned_users(course))
 
 
 @frappe.whitelist()
@@ -391,11 +391,26 @@ def _require_login():
 
 def _my_assignment(name: str):
 	_require_login()
+	user = frappe.session.user
 	doc = frappe.get_doc("Training Assignment", name)
-	if doc.user != frappe.session.user and enrolment.link_user_assignments(frappe.session.user):
-		doc.reload()  # their Employee was linked to this login after the assignment was made
-	if doc.user != frappe.session.user:
-		raise frappe.PermissionError(_("This training is assigned to someone else."))
+	if doc.user != user and same_user(doc.user, user):
+		doc.db_set("user", user, update_modified=False)  # stored with different letter case
+		frappe.local.flags.commit = True
+	if doc.user != user:
+		# Their Employee may be linked to another (unused) login, or linked to this one only
+		# now: match them up, which moves their assignments onto this login.
+		enrolment.ensure_my_assignments(user)
+		doc.reload()
+	if doc.user != user and not doc.employee and same_user(doc.email, frappe.db.get_value("User", user, "email")):
+		doc.db_set("user", user, update_modified=False)  # invited at this login's own email address
+		frappe.local.flags.commit = True
+	if doc.user != user:
+		frappe.throw(
+			_("Training {0} is assigned to a different login than the one you are signed in with ({1}). Ask HR to check the User on {0}, or sign in with the login it was sent to.").format(
+				doc.name, user
+			),
+			frappe.PermissionError,
+		)
 	if doc.status == "Cancelled":
 		frappe.throw(_("This training has been withdrawn by HR."))
 	return doc

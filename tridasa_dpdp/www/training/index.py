@@ -1,3 +1,5 @@
+import frappe
+
 from tridasa_dpdp.api import get_my_trainings
 from tridasa_dpdp.utils import portal_context
 
@@ -23,6 +25,10 @@ CTA = {
 def get_context(context):
 	portal_context(context)
 	context.trainings = get_my_trainings()
+	if not context.trainings:
+		from tridasa_dpdp.services.enrolment import why_no_training
+
+		context.no_training_reasons = why_no_training(frappe.session.user)
 	for t in context.trainings:
 		t.pill_label, t.pill_class = STATUS_PILL.get(t.status, (t.status, "info"))
 		t.cta = CTA.get(t.status, "Open")
