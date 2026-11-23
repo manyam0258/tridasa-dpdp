@@ -1,8 +1,8 @@
 app_name = "tridasa_dpdp"
 app_title = "Tridasa DPDP"
-app_publisher = "surendhranath"
-app_description = "Tridasa DPDP"
-app_email = "manyam.surendhranath@gmail.com"
+app_publisher = "Tridasa Realty Ventures Pvt. Ltd."
+app_description = "DPDP Act awareness playbook, assessment and certification for employees"
+app_email = "kjvaditya@gmail.com"
 app_license = "mit"
 
 # Apps
@@ -17,18 +17,9 @@ app_license = "mit"
 # 		"logo": "/assets/tridasa_dpdp/logo.png",
 # 		"title": "Tridasa DPDP",
 # 		"route": "/tridasa_dpdp",
-# 		"has_permission": "tridasa_dpdp.api.permission.has_app_permission",
+# 		"has_permission": "tridasa_dpdp.api.permission.has_app_permission"
 # 	}
 # ]
-
-# The dock, the rail down the left of the desk, is a document rather than a hook. Author it in
-# Manage Dock on a developer-mode site and press Export to App, and it is written to
-# `tridasa_dpdp/dock/tridasa_dpdp/tridasa_dpdp.json` for git to carry. An app that ships none has no
-# rail: its sidebar gets a switcher in the header instead.
-#
-# A companion app, one that extends a host app rather than standing on its own, says so with
-# `mount_on` on that same record, and its entries are appended to the host's rail. Mounting keeps
-# the companion off the apps screen, so it takes precedence over any add_to_apps_screen above.
 
 # Includes in <head>
 # ------------------
@@ -54,7 +45,6 @@ app_license = "mit"
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
-# doctype_kanban_js = {"doctype" : "public/js/doctype_kanban.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -79,9 +69,6 @@ app_license = "mit"
 
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
-
-# automatically load and sync documents of this doctype from downstream apps
-# importable_doctypes = [doctype_1]
 
 # Jinja
 # ----------
@@ -120,28 +107,11 @@ app_license = "mit"
 # before_app_uninstall = "tridasa_dpdp.utils.before_app_uninstall"
 # after_app_uninstall = "tridasa_dpdp.utils.after_app_uninstall"
 
-# Build
-# ------------------
-# To hook into the build process
-
-# after_build = "tridasa_dpdp.build.after_build"
-
-# To hook into the build process of other apps
-# The list of apps being built is passed as an argument
-
-# after_app_build = "tridasa_dpdp.build.after_app_build"
-
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
 
 # notification_config = "tridasa_dpdp.notifications.get_notification_config"
-
-# Awesome Bar
-# -----------
-# Extra search results: list of dicts with label, description, route, index.
-# route: ["List", "ToDo"], "/desk/docs/some/page", or "https://example.com"
-# awesomebar_search = ["tridasa_dpdp.search.awesomebar_results"]
 
 # Permissions
 # -----------
@@ -153,6 +123,14 @@ app_license = "mit"
 #
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
+# }
+
+# DocType Class
+# ---------------
+# Override standard doctype classes
+
+# override_doctype_class = {
+# 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
 # Document Events
@@ -192,14 +170,6 @@ app_license = "mit"
 # -------
 
 # before_tests = "tridasa_dpdp.install.before_tests"
-
-# Extend DocType Class
-# ------------------------------
-#
-# Specify custom mixins to extend the standard doctype controller.
-# extend_doctype_class = {
-# 	"Task": "tridasa_dpdp.custom.task.CustomTaskMixin"
-# }
 
 # Overriding Methods
 # ------------------------------
@@ -265,8 +235,6 @@ app_license = "mit"
 # 	"tridasa_dpdp.auth.validate"
 # ]
 
-# on_social_login = "tridasa_dpdp.auth.on_social_login"
-
 # Automatically update python controller files with type annotations for this app.
 # export_python_type_annotations = True
 
@@ -279,3 +247,45 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+# ---------------------------------------------------------------- Tridasa DPDP
+
+required_apps = ["frappe", "erpnext", "hrms"]
+
+before_install = "tridasa_dpdp.install.before_install"
+after_install = "tridasa_dpdp.install.after_install"
+
+app_include_js = "/assets/tridasa_dpdp/js/desk_training_banner.js"
+
+# Employees who only have a portal login land on their trainings
+role_home_page = {"Training Learner": "training"}
+
+standard_portal_menu_items = [
+	{"title": "My Trainings", "route": "/training", "role": "Training Learner"},
+]
+
+has_website_permission = {
+	"Training Certificate": "tridasa_dpdp.permissions.certificate_website_permission",
+}
+
+doc_events = {
+	"Employee": {
+		"after_insert": "tridasa_dpdp.overrides.employee.enroll_new_joiner",
+		"on_update": "tridasa_dpdp.overrides.employee.on_status_change",
+	},
+}
+
+# Employees with pending training land on it right after login
+on_login = "tridasa_dpdp.overrides.login.redirect_to_pending_training"
+
+# Every deploy (bench migrate) enrols active employees who aren't enrolled yet
+after_migrate = "tridasa_dpdp.services.enrolment.after_migrate"
+
+scheduler_events = {
+	"daily": ["tridasa_dpdp.tasks.daily"],
+	"hourly": ["tridasa_dpdp.tasks.hourly"],
+}
+
+jinja = {
+	"methods": ["tridasa_dpdp.utils.logo_data_uri"],
+}
