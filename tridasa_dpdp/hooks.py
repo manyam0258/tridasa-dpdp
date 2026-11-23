@@ -273,6 +273,9 @@ doc_events = {
 		"after_insert": "tridasa_dpdp.overrides.employee.enroll_new_joiner",
 		"on_update": "tridasa_dpdp.overrides.employee.on_status_change",
 	},
+	"User": {
+		"on_update": "tridasa_dpdp.overrides.user.on_update",
+	},
 }
 
 # Employees with pending training land on it right after login
