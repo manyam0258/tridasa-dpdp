@@ -1,0 +1,46 @@
+{% set heading = {
+	"invite": "You're enrolled in mandatory training",
+	"reminder": "Your training is still waiting",
+	"overdue": "Your training is overdue",
+	"recert": "Time to renew your certification"
+}[kind] %}
+<div style="font-family:Hind,'Segoe UI',Arial,sans-serif;color:#5E6672;font-size:15px;line-height:1.6;max-width:560px">
+	<p style="font:600 12px monospace;letter-spacing:.12em;text-transform:uppercase;color:#C23531;margin:0 0 6px">Tridasa DPDP Academy</p>
+	<h2 style="color:#234165;font-size:22px;margin:0 0 4px">{{ heading }}</h2>
+	<div style="width:64px;height:3px;background:#E44B47;margin:8px 0 18px"></div>
+
+	<p>Dear {{ employee_name }},</p>
+
+	{% if note %}
+	<div style="border-left:3px solid #234165;background:#F4F6F9;padding:10px 14px;margin:0 0 14px;color:#1F3A5C;white-space:pre-line">{{ note }}</div>
+	{% endif %}
+
+	{% if kind == "invite" %}
+	<p>As part of Tridasa's compliance with India's <b>Digital Personal Data Protection Act, 2023</b>, every employee must complete
+	<b>{{ course.course_name }}</b>. It takes about {{ minutes }} minutes: {{ slides }} short slides, then a {{ course.questions_per_attempt }}-question assessment.
+	Score {{ course.pass_percentage|int }}% or more and you receive your certificate instantly.</p>
+	{% elif kind == "recert" %}
+	<p>Your <b>{{ course.course_name }}</b> certificate has expired. The law and our processes change, so please go through the refreshed slides and pass the assessment again.</p>
+	{% elif kind == "overdue" %}
+	<p><b>{{ course.course_name }}</b> was due on <b>{{ due_date }}</b> and is not yet complete. Your reporting manager may be informed. Please finish it today.</p>
+	{% else %}
+	<p>This is a friendly reminder to complete <b>{{ course.course_name }}</b>.{% if progress %} You've read {{ progress|int }}% of the slides so far.{% endif %}
+	{% if status == "Assessment Failed" %} You can retake the assessment; you'll get a fresh set of questions.{% endif %}</p>
+	{% endif %}
+
+	<table cellpadding="0" cellspacing="0" style="margin:18px 0;border:1px solid #E1E5EB;border-radius:8px;width:100%">
+		<tr><td style="padding:10px 14px;color:#808892;width:40%">Complete by</td><td style="padding:10px 14px;color:#1F3A5C;font-weight:600">{{ due_date }}</td></tr>
+		<tr><td style="padding:10px 14px;color:#808892;border-top:1px solid #E1E5EB">Pass mark</td><td style="padding:10px 14px;color:#1F3A5C;border-top:1px solid #E1E5EB">{{ course.pass_percentage|int }}%{% if course.time_limit_minutes %} · {{ course.time_limit_minutes }}-minute time limit{% endif %}</td></tr>
+	</table>
+
+	{% if password_link %}
+	<p style="margin:0 0 8px"><b>First time?</b> Set your password first. You'll be taken to your training right after.</p>
+	<p style="margin:0 0 18px"><a href="{{ password_link }}" style="display:inline-block;background:#E44B47;color:#fff;text-decoration:none;font-weight:600;padding:11px 20px;border-radius:8px">Set password &amp; start</a></p>
+	<p style="font-size:13px;color:#808892">Already have a password? <a href="{{ start_url }}" style="color:#C23531">Go straight to the course</a>.</p>
+	{% else %}
+	<p style="margin:0 0 18px"><a href="{{ start_url }}" style="display:inline-block;background:#234165;color:#fff;text-decoration:none;font-weight:600;padding:11px 20px;border-radius:8px">{% if kind == "invite" %}Start the training{% else %}Continue the training{% endif %}</a></p>
+	{% endif %}
+
+	<p style="font-size:13px;color:#808892;border-top:1px solid #E1E5EB;padding-top:12px">All your trainings: <a href="{{ portal_url }}" style="color:#C23531">{{ portal_url }}</a><br>
+	Questions? Contact HR or the Data Protection Officer.</p>
+</div>

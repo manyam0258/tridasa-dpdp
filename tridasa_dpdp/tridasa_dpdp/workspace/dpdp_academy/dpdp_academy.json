@@ -1,0 +1,202 @@
+{
+ "charts": [
+  {
+   "chart_name": "Training Status",
+   "label": "Training Status"
+  },
+  {
+   "chart_name": "Certified by Department",
+   "label": "Certified by Department"
+  },
+  {
+   "chart_name": "Pending by Department",
+   "label": "Pending by Department"
+  }
+ ],
+ "content": "[{\"id\": \"h1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>DPDP Act Awareness: who has completed it</b></span>\", \"col\": 12}}, {\"id\": \"nc0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Invited\", \"col\": 4}}, {\"id\": \"nc1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Slides Completed\", \"col\": 4}}, {\"id\": \"nc2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Assessment Attempted\", \"col\": 4}}, {\"id\": \"nc3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Certified\", \"col\": 6}}, {\"id\": \"nc4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Training Overdue\", \"col\": 6}}, {\"id\": \"c1\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Training Status\", \"col\": 4}}, {\"id\": \"c2\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Certified by Department\", \"col\": 4}}, {\"id\": \"c3\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Pending by Department\", \"col\": 4}}, {\"id\": \"sp\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"h2\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\", \"col\": 12}}, {\"id\": \"s0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Courses\", \"col\": 3}}, {\"id\": \"s1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Assignments\", \"col\": 3}}, {\"id\": \"s2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Compliance Report\", \"col\": 3}}, {\"id\": \"s3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Certificates\", \"col\": 3}}, {\"id\": \"s4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question Bank\", \"col\": 3}}, {\"id\": \"s5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attempts\", \"col\": 3}}, {\"id\": \"s6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Learner Portal\", \"col\": 3}}, {\"id\": \"sp2\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"card1\", \"type\": \"card\", \"data\": {\"card_name\": \"Training\", \"col\": 4}}, {\"id\": \"card2\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
+ "creation": "2026-11-10 14:10:18.983059",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "education",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "DPDP Academy",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Course",
+   "link_count": 0,
+   "link_to": "Training Course",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Question",
+   "link_count": 0,
+   "link_to": "Training Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Assignment",
+   "link_count": 0,
+   "link_to": "Training Assignment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Certificate",
+   "link_count": 0,
+   "link_to": "Training Certificate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Training Compliance",
+   "link_count": 0,
+   "link_to": "Training Compliance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Training Assessment Attempt",
+   "link_count": 0,
+   "link_to": "Training Assessment Attempt",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-10 14:10:18.983059",
+ "modified_by": "Administrator",
+ "module": "Tridasa DPDP",
+ "name": "DPDP Academy",
+ "number_cards": [
+  {
+   "label": "Employees Invited",
+   "number_card_name": "Employees Invited"
+  },
+  {
+   "label": "Slides Completed",
+   "number_card_name": "Slides Completed"
+  },
+  {
+   "label": "Assessment Attempted",
+   "number_card_name": "Assessment Attempted"
+  },
+  {
+   "label": "Employees Certified",
+   "number_card_name": "Employees Certified"
+  },
+  {
+   "label": "Training Overdue",
+   "number_card_name": "Training Overdue"
+  }
+ ],
+ "owner": "Administrator",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Training Manager"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 30.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "label": "Courses",
+   "link_to": "Training Course",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Assignments",
+   "link_to": "Training Assignment",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "",
+   "label": "Compliance Report",
+   "link_to": "Training Compliance",
+   "report_ref_doctype": "Training Assignment",
+   "type": "Report"
+  },
+  {
+   "color": "Green",
+   "doc_view": "",
+   "label": "Certificates",
+   "link_to": "Training Certificate",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "",
+   "label": "Question Bank",
+   "link_to": "Training Question",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "",
+   "label": "Attempts",
+   "link_to": "Training Assessment Attempt",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "",
+   "label": "Learner Portal",
+   "type": "URL",
+   "url": "/training"
+  }
+ ],
+ "title": "DPDP Academy"
+}

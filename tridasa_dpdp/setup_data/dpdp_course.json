@@ -1,0 +1,604 @@
+{
+ "course_name": "DPDP Act Awareness",
+ "course_code": "DPDP-2026",
+ "version": "v1.0, November 2026",
+ "eyebrow": "Tridasa Realty Ventures Pvt. Ltd. · Employee playbook · v1.0, November 2026",
+ "introduction": "Every enquiry, site visit, booking and home handover at Tridasa runs on someone's personal data. This playbook explains what India's Digital Personal Data Protection Act, 2023 and the DPDP Rules, 2025 expect of us, and what each of us must do differently at work. Read it fully, then take the assessment.",
+ "timeline": "<div class=\"timeline\" aria-label=\"DPDP implementation timeline\">\n    <div class=\"ms\"><span class=\"d\">11 Aug 2023</span><span class=\"t\">Act passed</span><span class=\"s\">DPDP Act, 2023 (Act No. 22 of 2023) receives assent.</span></div>\n    <div class=\"ms\"><span class=\"d\">13 Nov 2025</span><span class=\"t\">Rules notified</span><span class=\"s\">Data Protection Board of India set up; definitions in force.</span></div>\n    <div class=\"ms now\"><span class=\"d\">13 Nov 2026 · this week</span><span class=\"t\">Consent Managers</span><span class=\"s\">Rule 4: registered Consent Managers can start operating.</span></div>\n    <div class=\"ms\"><span class=\"d\">13 May 2027</span><span class=\"t\">Full compliance</span><span class=\"s\">Notice, consent, security, breach reporting, rights, retention and penalties all apply.</span></div>\n  </div>",
+ "chapters": [
+  {
+   "title": "Why this matters to a real-estate company",
+   "content": "<p>A single customer journey at Tridasa Rise touches a lot of personal data: a phone number from a Facebook ad, a name in the Experience Center visitor register, PAN and Aadhaar for the booking, bank and loan details, family members on the sale deed, and CCTV footage at Nallagandla. Channel partners, home-loan banks, CRM and SAP S/4HANA all hold pieces of it.</p>\n<p>The DPDP Act makes Tridasa legally accountable for all of it, including what our vendors do on our behalf. Penalties reach ₹250 crore per instance. More importantly, our brand promise is \"Brightening Lives\": a buyer who trusts us with their family's details expects us to look after them.</p>\n<div class=\"callout\"><b>The one-line rule</b><p>Collect only what you need, use it only for the reason you told the customer, keep it safe, and delete it when the job is done.</p></div>"
+  },
+  {
+   "title": "Key terms you will hear",
+   "content": "<div class=\"tablebox\"><table>\n<tr><th>Term</th><th>Meaning</th><th>At Tridasa</th></tr>\n<tr><td><b>Personal data</b></td><td>Any data about an individual who can be identified by or in relation to it. <span class=\"ref\">s.2(t)</span></td><td>Name, phone, email, PAN, Aadhaar, address, photo, salary, CCTV image, site-visit record.</td></tr>\n<tr><td><b>Data Principal</b></td><td>The person the data is about. For a child, includes the parent or lawful guardian; for a person with disability, the lawful guardian. <span class=\"ref\">s.2(j)</span></td><td>Buyers, co-applicants, leads, visitors, employees, labour, vendor contacts.</td></tr>\n<tr><td><b>Data Fiduciary</b></td><td>Whoever decides why and how personal data is processed. <span class=\"ref\">s.2(i)</span></td><td>Tridasa Realty Ventures Pvt. Ltd.</td></tr>\n<tr><td><b>Data Processor</b></td><td>Processes data on behalf of a Fiduciary. <span class=\"ref\">s.2(k)</span></td><td>CRM vendor, digital marketing agency, payroll provider, cloud host, call centre.</td></tr>\n<tr><td><b>Consent Manager</b></td><td>A Board-registered platform that lets people give, manage, review and withdraw consent. <span class=\"ref\">s.2(g), Rule 4</span></td><td>Operational from 13 Nov 2026.</td></tr>\n<tr><td><b>Personal data breach</b></td><td>Any unauthorised processing, accidental disclosure, loss of access, alteration or destruction that compromises confidentiality, integrity or availability. <span class=\"ref\">s.2(u)</span></td><td>Buyer list emailed to the wrong person, stolen laptop, ransomware on SAP.</td></tr>\n<tr><td><b>Board</b></td><td>Data Protection Board of India, a digital-first regulator that inquires and imposes penalties. <span class=\"ref\">s.18</span></td><td>Breaches are reported here.</td></tr>\n</table></div>\n<p><b>Scope.</b> The Act covers personal data collected digitally, and paper data that is later digitised (for example a visitor register typed into CRM, or a scanned KYC copy). It does not cover data a person uses for purely personal or domestic purposes, or data the individual has deliberately made public. <span class=\"ref\">s.3</span></p>"
+  },
+  {
+   "title": "Where personal data lives at Tridasa",
+   "content": "<p>Know which of these your role touches. If you handle data not on this map, tell the DPO so it can be added.</p>\n<div class=\"tablebox\"><table>\n<tr><th>Process</th><th>Personal data</th><th>Systems</th><th>Owner</th></tr>\n<tr><td>Lead capture</td><td>Name, phone, email, budget, location</td><td>Website enquiry form, WhatsApp, ad platforms, CRM</td><td>Sales &amp; Marketing</td></tr>\n<tr><td>Experience Center visits</td><td>Visitor register, ID check, CCTV footage</td><td>Front desk, CCTV recorder</td><td>Sales, Admin</td></tr>\n<tr><td>Booking &amp; agreement</td><td>PAN, Aadhaar, address, photos, co-applicant and family details, signatures</td><td>CRM, SAP S/4HANA, file room</td><td>CRM team, Legal</td></tr>\n<tr><td>Payments &amp; loans</td><td>Bank details, loan sanction, TDS records</td><td>SAP, banks' portals</td><td>Finance</td></tr>\n<tr><td>Handover &amp; after-sales</td><td>Contact, flat number, complaints, maintenance requests</td><td>CRM, email, WhatsApp</td><td>Customer Relations, Facilities</td></tr>\n<tr><td>Marketing &amp; contests</td><td>Photos, family details (sometimes children), social handles</td><td>Social media, agency tools</td><td>Marketing</td></tr>\n<tr><td>Channel partners</td><td>Lead details shared by brokers, partner KYC</td><td>CRM, email</td><td>Sales</td></tr>\n<tr><td>People &amp; HR</td><td>CVs, ID proofs, salary, bank, health, family, attendance</td><td>HRMS, payroll vendor</td><td>HR</td></tr>\n<tr><td>Site &amp; contractors</td><td>Labour IDs, attendance, emergency contacts, medical records</td><td>Site registers, contractor files</td><td>Projects, Safety</td></tr>\n</table></div>"
+  },
+  {
+   "title": "The seven principles",
+   "content": "<ol>\n<li><b>Lawful, fair and transparent.</b> Process only with valid consent or a legitimate use, and tell people what we do.</li>\n<li><b>Purpose limitation.</b> Use data only for the purpose stated when it was collected.</li>\n<li><b>Data minimisation.</b> Collect only what that purpose needs. A brochure request does not need a PAN.</li>\n<li><b>Accuracy.</b> Keep data complete, correct and consistent, especially before using it in a decision or sharing it. <span class=\"ref\">s.8(3)</span></li>\n<li><b>Storage limitation.</b> Erase data once the purpose is served, unless a law requires us to keep it. <span class=\"ref\">s.8(7)</span></li>\n<li><b>Reasonable security safeguards.</b> Prevent breaches with technical and organisational measures. <span class=\"ref\">s.8(5)</span></li>\n<li><b>Accountability.</b> Tridasa remains responsible even when a vendor does the processing. <span class=\"ref\">s.8(1)</span></li>\n</ol>"
+  },
+  {
+   "title": "Consent and notice",
+   "content": "<p>Consent is valid only if it is <b>free, specific, informed, unconditional and unambiguous</b>, given by a <b>clear affirmative action</b>, and limited to the data needed for the stated purpose. <span class=\"ref\">s.6(1)</span></p>\n<div class=\"cols2\">\n<div class=\"box do\"><h3>Valid</h3><ul><li>An unticked checkbox the visitor ticks: \"Send me updates about Tridasa projects on WhatsApp.\"</li><li>Separate checkboxes for project updates and for partner offers.</li><li>A clear \"Unsubscribe\" or \"Stop\" option in every marketing message.</li></ul></div>\n<div class=\"box dont\"><h3>Not valid</h3><ul><li>Pre-ticked boxes, or \"by visiting this site you agree\".</li><li>Making a booking conditional on agreeing to marketing by an interior-design partner.</li><li>Privacy terms buried inside a 30-page sale agreement.</li></ul></div>\n</div>\n<p><b>Every request for consent comes with a notice</b> <span class=\"ref\">s.5, Rule 3</span>. The notice must stand on its own, be in clear and plain language, and give:</p>\n<ul><li>an itemised description of the personal data and the specific purpose of processing;</li><li>how to withdraw consent, as easily as it was given, and how to exercise rights;</li><li>how to complain to the Data Protection Board.</li></ul>\n<p>A customer may ask for the notice in English or any of the 22 languages in the Eighth Schedule of the Constitution, including Telugu, Hindi and Urdu. For customers whose data we collected before the Act came into force, we must send a notice as soon as reasonably practicable. <span class=\"ref\">s.5(2)</span></p>\n<p><b>Withdrawal.</b> When a customer withdraws consent, stop the processing (and make our vendors stop) within a reasonable time. Withdrawal does not make earlier processing unlawful, and it does not erase records a law requires us to keep, such as sale agreements and tax records. <span class=\"ref\">s.6(4)–(6)</span></p>"
+  },
+  {
+   "title": "Legitimate uses: when consent is not needed",
+   "content": "<p>Section 7 lists situations where we can process data without separate consent. The common ones for us:</p>\n<div class=\"tablebox\"><table>\n<tr><th>Legitimate use</th><th>Tridasa example</th><th>Limit</th></tr>\n<tr><td>Data voluntarily given for a specific purpose <span class=\"ref\">s.7(a)</span></td><td>A visitor emails sales@tridasa.in asking for a brochure and leaves a phone number.</td><td>Use it to send the brochure and follow up on that enquiry, not to add to unrelated campaigns.</td></tr>\n<tr><td>Compliance with law or a court order <span class=\"ref\">s.7(d)–(e)</span></td><td>Telangana RERA, tax authorities or a court lawfully require buyer details.</td><td>Share only what is required; route through Legal.</td></tr>\n<tr><td>Medical emergency or threat to life <span class=\"ref\">s.7(f)</span></td><td>Sharing an injured worker's blood group and emergency contact with a hospital.</td><td>Only what the emergency needs.</td></tr>\n<tr><td>Disaster or breakdown of public order <span class=\"ref\">s.7(h)</span></td><td>Sharing site headcount with rescue teams during a flood.</td><td>Only for the duration of the event.</td></tr>\n<tr><td>Employment purposes <span class=\"ref\">s.7(i)</span></td><td>Payroll, attendance, PF and ESI filings, preventing corporate espionage.</td><td>Not for unrelated monitoring or marketing.</td></tr>\n</table></div>"
+  },
+  {
+   "title": "Data Principal rights and how we respond",
+   "content": "<div class=\"cols2\">\n<div class=\"box\"><h3>Access <span class=\"ref\">s.11</span></h3><p>A summary of their data and our processing, and who we shared it with.</p></div>\n<div class=\"box\"><h3>Correction &amp; erasure <span class=\"ref\">s.12</span></h3><p>Correct, complete, update, or erase data no longer needed (unless law requires us to keep it).</p></div>\n<div class=\"box\"><h3>Grievance redressal <span class=\"ref\">s.13</span></h3><p>A readily available way to complain to us before going to the Board.</p></div>\n<div class=\"box\"><h3>Nomination <span class=\"ref\">s.14</span></h3><p>Name someone to exercise their rights on death or incapacity.</p></div>\n</div>\n<p>There is no right to data portability under the DPDP Act. Do not promise one.</p>\n<ol class=\"steps\">\n<li><b>Don't handle it alone.</b> Any request about a person's own data (whatever words they use) goes to the DPO mailbox the same day.</li>\n<li><b>Verify identity</b> before revealing or changing anything. Never confirm details over an unverified call.</li>\n<li><b>Log it.</b> The DPO records the request, the deadline and every action.</li>\n<li><b>Respond within the published timeline.</b> Rule 14 caps grievance responses at 90 days; Tridasa aims for 30.</li>\n</ol>"
+  },
+  {
+   "title": "Children and persons with disability",
+   "content": "<p>A child is anyone under <b>18</b>. Before processing a child's data, we need <b>verifiable consent of the parent or lawful guardian</b>, checked against reliable identity and age details (Rule 10). For a person with disability who has a lawful guardian, the guardian gives consent. <span class=\"ref\">s.9</span></p>\n<div class=\"callout\"><b>Contests like #MYKUTUMBAM</b><p>Family photos often include children. Collect verifiable parental consent before using them, and never use a child's data for tracking, behavioural monitoring or targeted advertising. These are prohibited outright. <span class=\"ref\">s.9(3)</span></p></div>"
+  },
+  {
+   "title": "Retention, accuracy and erasure",
+   "content": "<ul>\n<li>Leads that never convert: erase once the follow-up purpose is over, or when the person asks or stops engaging, unless a law requires us to keep them.</li>\n<li>Booking, agreement, payment and tax records: keep for the period the law prescribes (Legal will publish a schedule), then erase.</li>\n<li>Processing logs and traffic data: keep for <b>at least one year</b> so incidents can be investigated. <span class=\"ref\">Rule 6, Rule 8(3)</span></li>\n<li>Before sharing data with a bank, RERA or another fiduciary, check it is accurate and complete.</li>\n<li>When we erase, our processors must erase too.</li>\n</ul>"
+  },
+  {
+   "title": "Security rules for everyone",
+   "content": "<p>Rule 6 requires reasonable safeguards including encryption, obfuscation or masking; access control; logs and monitoring; backups for continuity; and security terms in vendor contracts. For you, that means:</p>\n<div class=\"cols2\">\n<div class=\"box do\"><h3>Do</h3><ul><li>Use only Tridasa-approved systems (CRM, SAP, official email) for customer data.</li><li>Lock your screen; use strong, unique passwords and MFA.</li><li>Share files with named people, with access that expires.</li><li>Lock away printed KYC and shred it when done.</li><li>Report lost devices immediately.</li></ul></div>\n<div class=\"box dont\"><h3>Don't</h3><ul><li>Forward customer lists to personal Gmail or WhatsApp.</li><li>Share logins, even within a team.</li><li>Leave booking files on the Experience Center desk.</li><li>Download full CRM exports \"just in case\".</li><li>Paste customer data into unapproved apps or AI tools.</li></ul></div>\n</div>"
+  },
+  {
+   "title": "Breach response",
+   "content": "<p>If you suspect a breach, report it the moment you notice. You will not be blamed for reporting; you can be for hiding it.</p>\n<ol class=\"steps\">\n<li><b>Report</b> to the DPO and IT (incident channel) immediately. Do not delete emails, wipe devices or \"clean up\" evidence.</li>\n<li><b>Contain:</b> IT revokes access, recalls emails, isolates systems.</li>\n<li><b>Notify without delay:</b> the DPO informs the Data Protection Board and each affected person, in plain language, with what happened, likely consequences and steps they can take. <span class=\"ref\">s.8(6), Rule 7</span></li>\n<li><b>Within 72 hours</b> of becoming aware, a detailed report goes to the Board: facts, cause, mitigation, and who caused it if known.</li>\n<li><b>Learn:</b> the root cause is fixed and recorded.</li>\n</ol>"
+  },
+  {
+   "title": "Vendors, channel partners and cross-border transfer",
+   "content": "<ul>\n<li>Engage a Data Processor only under a <b>valid written contract</b>. Tridasa stays responsible for what they do. <span class=\"ref\">s.8(2)</span></li>\n<li>When a contract ends or consent is withdrawn, make sure the vendor erases our data.</li>\n<li>Personal data may go abroad (for example a cloud server) except to countries the Central Government restricts by notification. Check with the DPO before using any new overseas tool. <span class=\"ref\">s.16</span></li>\n<li>Channel partners sharing leads with us must confirm the lead consented to being contacted by Tridasa.</li>\n</ul>"
+  },
+  {
+   "title": "Penalties",
+   "content": "<div class=\"tablebox\"><table>\n<tr><th>Breach of duty</th><th>Maximum penalty</th></tr>\n<tr><td>Failure to take reasonable security safeguards to prevent a breach</td><td class=\"num\">₹250 crore</td></tr>\n<tr><td>Failure to notify the Board or affected people of a breach</td><td class=\"num\">₹200 crore</td></tr>\n<tr><td>Breach of obligations about children's data</td><td class=\"num\">₹200 crore</td></tr>\n<tr><td>Breach of additional duties of a Significant Data Fiduciary</td><td class=\"num\">₹150 crore</td></tr>\n<tr><td>Breach of any other provision of the Act or Rules</td><td class=\"num\">₹50 crore</td></tr>\n<tr><td>Data Principal's breach of their duties (s.15), such as false complaints or impersonation</td><td class=\"num\">₹10,000</td></tr>\n</table></div>\n<p>The Board can inquire, impose penalties and accept voluntary undertakings. Appeals go to the Telecom Disputes Settlement and Appellate Tribunal (TDSAT) within 60 days. <span class=\"ref\">s.29, s.33, Schedule</span></p>"
+  },
+  {
+   "title": "Desk rules by team",
+   "content": "<div class=\"cols2\">\n<div class=\"box\"><h3>Sales &amp; Experience Center</h3><ul><li>Collect only name, contact and requirement at the first visit.</li><li>Keep the visitor register face-down; don't photograph it.</li><li>Display the CCTV notice at the entrance.</li></ul></div>\n<div class=\"box\"><h3>Marketing</h3><ul><li>Unticked, separate consent boxes on every form.</li><li>Honour \"stop\" within a reasonable time across all agencies.</li><li>Parental consent for any child's photo.</li></ul></div>\n<div class=\"box\"><h3>CRM, Legal &amp; Finance</h3><ul><li>Store KYC only in CRM or SAP, never on desktops.</li><li>Share loan files with banks over approved channels only.</li><li>Follow the retention schedule.</li></ul></div>\n<div class=\"box\"><h3>HR &amp; Projects</h3><ul><li>Restrict access to salary, health and ID records.</li><li>Labour data only for attendance, wages, safety and legal filings.</li><li>Delete unsuccessful candidates' CVs on schedule.</li></ul></div>\n</div>"
+  },
+  {
+   "title": "Who to contact",
+   "content": "<div class=\"tablebox\"><table>\n<tr><th>For</th><th>Contact</th></tr>\n<tr><td>Data rights requests, grievances, privacy questions</td><td>Data Protection Officer / Grievance Officer · <i>name and mailbox to be announced by management</i></td></tr>\n<tr><td>Suspected breach, lost device, phishing</td><td>IT incident channel and the DPO, immediately</td></tr>\n<tr><td>Corporate office</td><td>Plot No. 113, First Floor, 10 Plus Ista Homes, Kavuri Hills, Hyderabad 500081 · 040-2311-3333</td></tr>\n</table></div>\n<div class=\"cta-row\"><a class=\"btn sun\" href=\"#assessment\">I've read the playbook, take the assessment</a></div>\n<p class=\"note\">This playbook summarises the DPDP Act, 2023 and DPDP Rules, 2025 for internal training. It is not legal advice; Tridasa's DPO and legal counsel decide specific cases.</p>"
+  }
+ ],
+ "topics": [
+  "Scope & key terms",
+  "Consent",
+  "Notice",
+  "Legitimate uses",
+  "Data Principal rights",
+  "Retention & accuracy",
+  "Security & breach",
+  "Children & guardians",
+  "Vendors & transfers",
+  "Board & penalties"
+ ],
+ "questions": [
+  {
+   "code": "A1",
+   "topic": "Scope & key terms",
+   "question": "Tridasa decides why and how buyers' personal data is processed for bookings. Under the DPDP Act, Tridasa is a:",
+   "options": [
+    "Data Fiduciary",
+    "Data Processor",
+    "Data Principal",
+    "Consent Manager"
+   ],
+   "correct": 0,
+   "explanation": "The entity that determines the purpose and means of processing is the Data Fiduciary (s.2(i)). Our CRM vendor would be a Data Processor."
+  },
+  {
+   "code": "A2",
+   "topic": "Scope & key terms",
+   "question": "Which of these falls OUTSIDE the DPDP Act?",
+   "options": [
+    "Contacts a person keeps on their own phone for purely personal or domestic use",
+    "Scanned KYC copies of a flat buyer",
+    "Experience Center visitor details later typed into the CRM",
+    "Employee payroll records in HRMS"
+   ],
+   "correct": 0,
+   "explanation": "Section 3 excludes data processed by an individual for a personal or domestic purpose. Paper data that is digitised later is covered."
+  },
+  {
+   "code": "A3",
+   "topic": "Scope & key terms",
+   "question": "A home buyer's name, PAN and phone number are all examples of:",
+   "options": [
+    "Personal data, because the buyer can be identified from them",
+    "Sensitive personal data, a separate category under the DPDP Act",
+    "Public data, because PAN is issued by the government",
+    "Non-personal data once stored in SAP"
+   ],
+   "correct": 0,
+   "explanation": "Personal data is any data about an identifiable individual (s.2(t)). The DPDP Act has no separate 'sensitive' category."
+  },
+  {
+   "code": "A4",
+   "topic": "Scope & key terms",
+   "question": "By when must the DPDP Act's core obligations (notice, security safeguards, breach reporting, rights) be fully in place?",
+   "options": [
+    "13 May 2027",
+    "13 November 2025",
+    "1 January 2026",
+    "There is no deadline; compliance is voluntary"
+   ],
+   "correct": 0,
+   "explanation": "The Rules were notified on 13 Nov 2025 with an 18-month runway; the substantive obligations commence on 13 May 2027."
+  },
+  {
+   "code": "B1",
+   "topic": "Consent",
+   "question": "Which describes valid consent under the DPDP Act?",
+   "options": [
+    "Free, specific, informed, unconditional and unambiguous, given by a clear affirmative action",
+    "Assumed when a visitor browses tridasa.in for more than a minute",
+    "Given through a pre-ticked box the visitor did not untick",
+    "Valid for any purpose once given for one purpose"
+   ],
+   "correct": 0,
+   "explanation": "Section 6(1) sets these conditions and requires a clear affirmative action."
+  },
+  {
+   "code": "B2",
+   "topic": "Consent",
+   "question": "Our enquiry form has a pre-ticked box: 'I agree to receive offers from Tridasa and its partners'. What should we do?",
+   "options": [
+    "Replace it with an unticked box the person must tick, kept separate from the enquiry itself",
+    "Keep it, since the person can untick it if they object",
+    "Keep it, but add the clause to the website footer",
+    "Remove the box and treat every enquiry as consent for partner offers"
+   ],
+   "correct": 0,
+   "explanation": "A pre-ticked box is not a clear affirmative action. Marketing consent must be separate and actively given."
+  },
+  {
+   "code": "B3",
+   "topic": "Consent",
+   "question": "A buyer messages 'STOP' to our WhatsApp marketing updates. What is the correct response?",
+   "options": [
+    "Stop marketing messages within a reasonable time and make sure our agencies stop too",
+    "Ask the buyer to send a signed letter to withdraw",
+    "Continue until the current campaign ends",
+    "Delete the buyer's entire booking file, including the sale agreement"
+   ],
+   "correct": 0,
+   "explanation": "Withdrawal must be as easy as giving consent (s.6(4)). Records required by law, like the sale agreement, are retained."
+  },
+  {
+   "code": "B4",
+   "topic": "Consent",
+   "question": "Can we make a flat booking conditional on the buyer agreeing to share data with an interior-design partner for marketing?",
+   "options": [
+    "No. Consent must be limited to data necessary for the specified purpose and cannot be bundled",
+    "Yes, if it is mentioned in the booking form",
+    "Yes, because the partner may offer the buyer a discount",
+    "Only for buyers paying in cash"
+   ],
+   "correct": 0,
+   "explanation": "Section 6(1) limits consent to what is necessary for the specified purpose; unrelated purposes cannot be forced."
+  },
+  {
+   "code": "C1",
+   "topic": "Notice",
+   "question": "What must a privacy notice given with a consent request contain?",
+   "options": [
+    "The personal data and purpose, how to withdraw consent and exercise rights, and how to complain to the Board",
+    "Only a link to the company's annual report",
+    "The names of every employee who can access the data",
+    "Only the company's GST number and address"
+   ],
+   "correct": 0,
+   "explanation": "Section 5 and Rule 3 require an itemised description of data and purposes, the way to withdraw and exercise rights, and how to complain to the Board."
+  },
+  {
+   "code": "C2",
+   "topic": "Notice",
+   "question": "A Telugu-speaking buyer asks for our privacy notice in Telugu. What applies?",
+   "options": [
+    "They can access the notice in English or any of the 22 Eighth Schedule languages, including Telugu",
+    "Notices are only available in English",
+    "Only Hindi and English are permitted",
+    "We can refuse because the sale agreement is in English"
+   ],
+   "correct": 0,
+   "explanation": "Section 5(3) gives the option to access the notice in English or any Eighth Schedule language."
+  },
+  {
+   "code": "C3",
+   "topic": "Notice",
+   "question": "Is it enough to include our privacy terms on page 27 of the sale agreement?",
+   "options": [
+    "No. The notice should be presented independently, in clear and plain language",
+    "Yes, as long as the buyer signs every page",
+    "Yes, if the font size is at least 8 points",
+    "Yes, notices are optional for existing customers"
+   ],
+   "correct": 0,
+   "explanation": "Rule 3 requires a notice that is understandable on its own, without reference to other information, in clear and plain language."
+  },
+  {
+   "code": "C4",
+   "topic": "Notice",
+   "question": "For customers who booked in 2024, before the Act took effect, what does Tridasa owe them?",
+   "options": [
+    "A notice about their data and rights as soon as reasonably practicable",
+    "Nothing, since the Act is not retrospective in any way",
+    "Immediate deletion of all their data",
+    "A fresh sale agreement"
+   ],
+   "correct": 0,
+   "explanation": "Section 5(2) requires notice for consent given before commencement as soon as reasonably practicable."
+  },
+  {
+   "code": "D1",
+   "topic": "Legitimate uses",
+   "question": "A visitor emails sales@tridasa.in for a brochure and includes a phone number. What can we do without separate consent?",
+   "options": [
+    "Send the brochure and follow up on that enquiry",
+    "Add the number to every future campaign, including partner offers",
+    "Share the number with channel partners",
+    "Sell the lead to a home-loan aggregator"
+   ],
+   "correct": 0,
+   "explanation": "Data given voluntarily for a specified purpose may be used for that purpose (s.7(a)), but not for unrelated ones."
+  },
+  {
+   "code": "D2",
+   "topic": "Legitimate uses",
+   "question": "Processing employees' attendance and bank details for payroll is:",
+   "options": [
+    "A legitimate use for employment purposes under s.7(i)",
+    "Allowed only with fresh consent every month",
+    "Prohibited under the DPDP Act",
+    "Allowed only for employees above a certain grade"
+   ],
+   "correct": 0,
+   "explanation": "Section 7(i) permits processing for employment purposes."
+  },
+  {
+   "code": "D3",
+   "topic": "Legitimate uses",
+   "question": "A worker is injured at the Tridasa Rise site. Can we share his blood group and emergency contact with the hospital?",
+   "options": [
+    "Yes, responding to a medical emergency is a legitimate use",
+    "No, written consent is always required first",
+    "Only after the DPO approves in writing",
+    "Only if he is a permanent employee"
+   ],
+   "correct": 0,
+   "explanation": "Section 7(f) covers responding to a medical emergency involving a threat to life or health."
+  },
+  {
+   "code": "D4",
+   "topic": "Legitimate uses",
+   "question": "Telangana RERA lawfully requires details of allottees in a project. What is right?",
+   "options": [
+    "Share what the law requires, through Legal, as a legitimate use",
+    "Refuse unless every buyer consents individually",
+    "Share the full CRM export to be safe",
+    "Ask the authority to buy the data"
+   ],
+   "correct": 0,
+   "explanation": "Processing to comply with a law or order is a legitimate use (s.7). Share only what is required."
+  },
+  {
+   "code": "E1",
+   "topic": "Data Principal rights",
+   "question": "Which of these is NOT a right under the DPDP Act?",
+   "options": [
+    "Data portability",
+    "Access to a summary of personal data",
+    "Correction and erasure",
+    "Nominating someone to exercise rights after death or incapacity"
+   ],
+   "correct": 0,
+   "explanation": "The Act gives access (s.11), correction and erasure (s.12), grievance redressal (s.13) and nomination (s.14). It has no portability right."
+  },
+  {
+   "code": "E2",
+   "topic": "Data Principal rights",
+   "question": "A buyer calls the front desk asking what personal data Tridasa holds about her. What should you do?",
+   "options": [
+    "Route it to the DPO the same day; identity is verified before anything is shared",
+    "Read out her details over the phone right away",
+    "Tell her the law does not allow such requests",
+    "Ask her to file an RTI application"
+   ],
+   "correct": 0,
+   "explanation": "Access requests (s.11) are handled centrally with identity verification and a logged response."
+  },
+  {
+   "code": "E3",
+   "topic": "Data Principal rights",
+   "question": "Under the DPDP Rules, what is the maximum time to respond to a Data Principal's grievance?",
+   "options": [
+    "90 days",
+    "7 years",
+    "24 hours",
+    "There is no time limit"
+   ],
+   "correct": 0,
+   "explanation": "Rule 14 requires a published response period not exceeding 90 days. Tridasa aims for 30."
+  },
+  {
+   "code": "E4",
+   "topic": "Data Principal rights",
+   "question": "A buyer wants her son to be able to exercise her data rights if she dies or becomes incapacitated. This is the right to:",
+   "options": [
+    "Nominate",
+    "Data portability",
+    "Be forgotten by the Board",
+    "Appeal to TDSAT"
+   ],
+   "correct": 0,
+   "explanation": "Section 14 gives every Data Principal the right to nominate another individual."
+  },
+  {
+   "code": "F1",
+   "topic": "Retention & accuracy",
+   "question": "A lead visited the Experience Center 2 years ago, never booked, and has not responded since. What should happen to their data?",
+   "options": [
+    "Erase it, since the purpose is no longer served and no law requires us to keep it",
+    "Keep it forever in case they buy later",
+    "Move it to a personal laptop for safekeeping",
+    "Sell it to another developer"
+   ],
+   "correct": 0,
+   "explanation": "Section 8(7) requires erasure once the specified purpose is no longer being served, unless retention is required by law."
+  },
+  {
+   "code": "F2",
+   "topic": "Retention & accuracy",
+   "question": "For how long must logs of personal data processing be kept, at minimum, under the Rules?",
+   "options": [
+    "One year",
+    "One week",
+    "Ten years in every case",
+    "They must not be kept at all"
+   ],
+   "correct": 0,
+   "explanation": "Rule 6 and Rule 8(3) require logs and traffic data to be retained for at least one year."
+  },
+  {
+   "code": "F3",
+   "topic": "Retention & accuracy",
+   "question": "Marketing wants to use Experience Center visitor numbers to sell a partner's insurance products. Is this allowed?",
+   "options": [
+    "No, not without fresh consent for that purpose",
+    "Yes, visitors already gave their numbers",
+    "Yes, if the calls are made after 6 pm",
+    "Yes, if the partner pays a fee"
+   ],
+   "correct": 0,
+   "explanation": "Purpose limitation: data collected for a site visit cannot be reused for an unrelated purpose without consent."
+  },
+  {
+   "code": "F4",
+   "topic": "Retention & accuracy",
+   "question": "Before sending a buyer's details to her home-loan bank, what must we ensure?",
+   "options": [
+    "The data is complete, accurate and consistent",
+    "The bank pays for the data",
+    "The buyer's file is printed in colour",
+    "Nothing; the bank will verify it"
+   ],
+   "correct": 0,
+   "explanation": "Section 8(3) requires accuracy when data is used in a decision or disclosed to another Data Fiduciary."
+  },
+  {
+   "code": "G1",
+   "topic": "Security & breach",
+   "question": "After a personal data breach, what must Tridasa do?",
+   "options": [
+    "Inform the Board and each affected person without delay, and send the Board a detailed report within 72 hours",
+    "Inform no one if the data was recovered",
+    "Inform the Board within 1 year",
+    "Post about it on social media only"
+   ],
+   "correct": 0,
+   "explanation": "Section 8(6) and Rule 7: intimation without delay, and a detailed report to the Board within 72 hours."
+  },
+  {
+   "code": "G2",
+   "topic": "Security & breach",
+   "question": "You emailed a list of 40 buyers to the wrong external address. What do you do first?",
+   "options": [
+    "Report it immediately to the DPO and IT incident channel",
+    "Delete the sent email and say nothing",
+    "Ask the recipient informally to ignore it and close the matter",
+    "Wait to see if any buyer complains"
+   ],
+   "correct": 0,
+   "explanation": "Speed matters for the 72-hour clock. Report first; don't destroy evidence."
+  },
+  {
+   "code": "G3",
+   "topic": "Security & breach",
+   "question": "Which of these is one of the 'reasonable security safeguards' listed in Rule 6?",
+   "options": [
+    "Encryption, masking or obfuscation of personal data",
+    "Sharing one CRM login across the sales team",
+    "Keeping all KYC copies on desktops for quick access",
+    "Disabling access logs to save storage"
+   ],
+   "correct": 0,
+   "explanation": "Rule 6 lists encryption or masking, access control, logs and monitoring, backups, and contractual safeguards."
+  },
+  {
+   "code": "G4",
+   "topic": "Security & breach",
+   "question": "You want to finish a booking report at home. How should you move the customer data?",
+   "options": [
+    "Use only Tridasa-approved systems and devices",
+    "Forward it to your personal Gmail",
+    "Send it to yourself on WhatsApp",
+    "Copy it to a personal USB drive"
+   ],
+   "correct": 0,
+   "explanation": "Personal accounts and devices sit outside our safeguards and logs."
+  },
+  {
+   "code": "H1",
+   "topic": "Children & guardians",
+   "question": "Under the DPDP Act, a 'child' is anyone under:",
+   "options": [
+    "18 years",
+    "13 years",
+    "16 years",
+    "21 years"
+   ],
+   "correct": 0,
+   "explanation": "Section 2(f) defines a child as an individual who has not completed eighteen years."
+  },
+  {
+   "code": "H2",
+   "topic": "Children & guardians",
+   "question": "The #MYKUTUMBAM contest receives a family photo that includes two children. What do we need before using it?",
+   "options": [
+    "Verifiable consent from the parent or lawful guardian",
+    "Nothing; the photo was sent voluntarily",
+    "The children's own verbal consent",
+    "Only a watermark on the photo"
+   ],
+   "correct": 0,
+   "explanation": "Section 9(1) and Rule 10 require verifiable parental consent for children's data."
+  },
+  {
+   "code": "H3",
+   "topic": "Children & guardians",
+   "question": "Which processing of children's data is prohibited outright?",
+   "options": [
+    "Tracking, behavioural monitoring or targeted advertising directed at children",
+    "Storing a child's name as a nominee with parental consent",
+    "Recording a child's name as a family member on an allotment letter",
+    "Responding to a parent's query"
+   ],
+   "correct": 0,
+   "explanation": "Section 9(3) prohibits tracking, behavioural monitoring and targeted advertising directed at children."
+  },
+  {
+   "code": "H4",
+   "topic": "Children & guardians",
+   "question": "A buyer is a person with disability who has a court-appointed lawful guardian. Whose consent do we take?",
+   "options": [
+    "The lawful guardian's",
+    "Any relative present at the site",
+    "The channel partner's",
+    "No consent is needed"
+   ],
+   "correct": 0,
+   "explanation": "Section 9(1) requires verifiable consent of the lawful guardian."
+  },
+  {
+   "code": "I1",
+   "topic": "Vendors & transfers",
+   "question": "Tridasa hires a digital marketing agency to run lead campaigns. Which is true?",
+   "options": [
+    "Engage them only under a valid contract; Tridasa stays responsible for their processing",
+    "Responsibility moves fully to the agency",
+    "No contract is needed if the agency is reputable",
+    "The agency can reuse the leads for its other clients"
+   ],
+   "correct": 0,
+   "explanation": "Section 8(1)-(2): the Fiduciary remains responsible and may engage a Processor only under a valid contract."
+  },
+  {
+   "code": "I2",
+   "topic": "Vendors & transfers",
+   "question": "Can Tridasa store customer data on a cloud server outside India?",
+   "options": [
+    "Yes, except in countries the Central Government restricts by notification",
+    "Never, under any circumstances",
+    "Only in countries that share a border with India",
+    "Only if every customer signs a separate form"
+   ],
+   "correct": 0,
+   "explanation": "Section 16 allows transfers except to countries restricted by notification."
+  },
+  {
+   "code": "I3",
+   "topic": "Vendors & transfers",
+   "question": "What is a Consent Manager under the DPDP framework?",
+   "options": [
+    "A Board-registered platform that lets people give, manage, review and withdraw consent",
+    "The sales manager who collects consent forms",
+    "Any vendor that stores consent records",
+    "A government officer who approves each consent"
+   ],
+   "correct": 0,
+   "explanation": "Section 2(g) and Rule 4. Consent Managers can operate from 13 November 2026."
+  },
+  {
+   "code": "I4",
+   "topic": "Vendors & transfers",
+   "question": "Our contract with a call-centre vendor ends. What should happen to the lead data they hold?",
+   "options": [
+    "Ensure the vendor erases it",
+    "Let the vendor keep it for future business",
+    "Ask them to sell it back to us",
+    "Nothing; it is their data now"
+   ],
+   "correct": 0,
+   "explanation": "Section 8(7)(b) requires the Fiduciary to cause its Processors to erase data that is no longer needed."
+  },
+  {
+   "code": "J1",
+   "topic": "Board & penalties",
+   "question": "Maximum penalty for failing to take reasonable security safeguards to prevent a breach:",
+   "options": [
+    "₹250 crore",
+    "₹10,000",
+    "₹5 crore",
+    "₹1,000 crore"
+   ],
+   "correct": 0,
+   "explanation": "Schedule to the Act, item 1."
+  },
+  {
+   "code": "J2",
+   "topic": "Board & penalties",
+   "question": "Maximum penalty for failing to notify the Board and affected people of a breach:",
+   "options": [
+    "₹200 crore",
+    "₹50 lakh",
+    "₹10 crore",
+    "No penalty"
+   ],
+   "correct": 0,
+   "explanation": "Schedule to the Act, item 2."
+  },
+  {
+   "code": "J3",
+   "topic": "Board & penalties",
+   "question": "Which is a duty of the Data Principal under s.15, with a penalty of up to ₹10,000?",
+   "options": [
+    "Not filing a false or frivolous grievance or complaint",
+    "Reading every privacy notice twice",
+    "Paying a fee to exercise rights",
+    "Visiting the Experience Center in person"
+   ],
+   "correct": 0,
+   "explanation": "Section 15 duties include not impersonating others, not suppressing information and not filing false or frivolous complaints."
+  },
+  {
+   "code": "J4",
+   "topic": "Board & penalties",
+   "question": "An order of the Data Protection Board can be appealed to:",
+   "options": [
+    "TDSAT, within 60 days",
+    "Telangana RERA, within 1 year",
+    "The local police station",
+    "No one; Board orders are final"
+   ],
+   "correct": 0,
+   "explanation": "Section 29: appeals lie to the Telecom Disputes Settlement and Appellate Tribunal within 60 days."
+  }
+ ]
+}

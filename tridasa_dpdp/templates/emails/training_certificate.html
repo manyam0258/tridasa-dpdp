@@ -1,0 +1,14 @@
+<div style="font-family:Hind,'Segoe UI',Arial,sans-serif;color:#5E6672;font-size:15px;line-height:1.6;max-width:560px">
+	<p style="font:600 12px monospace;letter-spacing:.12em;text-transform:uppercase;color:#C23531;margin:0 0 6px">Tridasa DPDP Academy</p>
+	<h2 style="color:#234165;font-size:22px;margin:0 0 4px">Congratulations, you're certified</h2>
+	<div style="width:64px;height:3px;background:#E44B47;margin:8px 0 18px"></div>
+	<p>Dear {{ cert.employee_name }},</p>
+	<p>You passed <b>{{ cert.course_name }}</b> with a score of <b>{{ cert.score|int }}%</b>. Your certificate is attached.</p>
+	<table cellpadding="0" cellspacing="0" style="margin:18px 0;border:1px solid #E1E5EB;border-radius:8px;width:100%">
+		<tr><td style="padding:10px 14px;color:#808892;width:40%">Certificate no.</td><td style="padding:10px 14px;color:#1F3A5C;font-family:monospace">{{ cert.name }}</td></tr>
+		<tr><td style="padding:10px 14px;color:#808892;border-top:1px solid #E1E5EB">Issued</td><td style="padding:10px 14px;color:#1F3A5C;border-top:1px solid #E1E5EB">{{ frappe.utils.format_date(cert.issue_date, "d MMMM yyyy") }}</td></tr>
+		{% if cert.valid_until %}<tr><td style="padding:10px 14px;color:#808892;border-top:1px solid #E1E5EB">Valid until</td><td style="padding:10px 14px;color:#1F3A5C;border-top:1px solid #E1E5EB">{{ frappe.utils.format_date(cert.valid_until, "d MMMM yyyy") }}</td></tr>{% endif %}
+	</table>
+	<p>Thank you for helping us look after the people behind every booking.</p>
+	<p style="font-size:13px;color:#808892">You can download it again any time from <a href="{{ portal_url }}" style="color:#C23531">{{ portal_url }}</a>.</p>
+</div>
