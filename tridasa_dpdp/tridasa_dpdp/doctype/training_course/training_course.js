@@ -163,14 +163,23 @@ function preview_paper(frm) {
 
 function assign_all(frm) {
 	frappe.confirm(
-		__("Assign this course to every active employee who isn't enrolled yet? No emails are sent; they'll see it on their trainings page and when they log in. Use Email Invitations when you want to email them."),
+		__("Assign this course to every active employee and every user without an Employee record who isn't enrolled yet? No emails are sent; they'll see it on their trainings page and when they log in. Use Email All Employees when you want to email them."),
 		() =>
-			frappe.call("tridasa_dpdp.api.assign_all_now", { course: frm.doc.name }).then(({ message }) => {
-				if (!message.pending) return frappe.msgprint(__("Every active employee is already enrolled."));
-				frappe.msgprint(
-					__("Assigning {0} employees in the background (no emails). You'll see a summary here when it's done.", [message.pending])
-				);
-			})
+			frappe
+				.call({ method: "tridasa_dpdp.api.assign_all_now", args: { course: frm.doc.name }, freeze: true })
+				.then(({ message }) => {
+					if (!message.pending) return frappe.msgprint(__("Everyone is already enrolled."));
+					if (message.queued) {
+						return frappe.msgprint(__("Assigning {0} people in the background (no emails).", [message.pending]));
+					}
+					frappe.msgprint(
+						__("Assigned {0} employee(s) and {1} user(s) without an Employee record. No emails were sent.", [
+							(message.invited || 0) + (message.reinvited || 0),
+							message.users_assigned || 0,
+						])
+					);
+					render_funnel(frm);
+				})
 	);
 }
 

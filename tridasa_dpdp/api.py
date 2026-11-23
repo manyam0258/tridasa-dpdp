@@ -213,38 +213,41 @@ def _invite_in_background(course, employees, due_in_days, requested_by, notify=T
 
 @frappe.whitelist(methods=["POST"])
 def assign_all_now(course: str) -> dict:
-	"""Assign every active employee not yet in this course, silently (runs in the background)."""
+	"""Assign every active employee, and every login without an Employee record, not yet in
+	this course. Silent (no emails). Runs right away unless the company is very large."""
 	frappe.only_for(MANAGER_ROLES)
-	doc = frappe.get_doc("Training Course", course)
-	if doc.status != "Published":
+	if frappe.db.get_value("Training Course", course, "status") != "Published":
 		frappe.throw(_("Publish the course first."))
-	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
-	pending = [e for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled]
+	pending = _count_unassigned(course)
 	if not pending:
 		return {"pending": 0}
+	if pending <= enrolment.INLINE_ASSIGN_LIMIT:
+		summary = enrolment.assign_all_active(course, commit=False).get(course, {})
+		return {"pending": pending, "queued": False, **summary}
 	frappe.enqueue(
-		"tridasa_dpdp.api._invite_in_background",
+		"tridasa_dpdp.services.enrolment.assign_all_active",
 		queue="long",
 		timeout=3600,
 		course=course,
-		employees=pending,
-		due_in_days=None,
-		requested_by=frappe.session.user,
-		notify=False,
 		job_id=f"tridasa_dpdp:assign_all:{course}",
 		deduplicate=True,
 		enqueue_after_commit=True,
 	)
-	return {"pending": len(pending), "queued": True}
+	return {"pending": pending, "queued": True}
+
+
+def _count_unassigned(course: str) -> int:
+	doc = frappe.get_doc("Training Course", course)
+	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
+	employees = sum(1 for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled)
+	return employees + (0 if doc.company else len(enrolment.unassigned_users(course)))
 
 
 @frappe.whitelist()
 def get_invitation_counts(course: str) -> dict:
 	"""For the Email Invitations dialog."""
 	frappe.only_for(MANAGER_ROLES)
-	doc = frappe.get_doc("Training Course", course)
-	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
-	unassigned = sum(1 for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled)
+	unassigned = _count_unassigned(course)
 	base = {"course": course, "status": ("in", OPEN_STATUSES)}
 	return {
 		# employees not assigned yet are assigned first, so they count as 'not emailed'
@@ -294,12 +297,8 @@ def email_invitations(course: str, scope: str = "open", department: str | None =
 
 
 def _assign_missing(course: str):
-	"""Everyone active should be on the list before HR emails 'all employees'."""
-	doc = frappe.get_doc("Training Course", course)
-	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
-	pending = [e for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled]
-	if pending:
-		enrolment.invite_employees(course, pending, notify=False)
+	"""Everyone should be on the list before HR emails 'all employees'."""
+	enrolment.assign_all_active(course, commit=False)
 
 
 def _email_in_background(course, scope, department, requested_by, note=None):
