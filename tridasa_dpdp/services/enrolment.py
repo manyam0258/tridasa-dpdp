@@ -65,6 +65,8 @@ def invite_employee(
 			return {"action": "no_email"}
 	else:
 		user = linked_user(emp)
+		if user:
+			_add_learner_role(user)  # so 'My Trainings' shows in their menu and portal home
 
 	due = add_days(today(), due_in_days if due_in_days is not None else (course_doc.due_in_days or 14))
 	if existing:
@@ -133,7 +135,7 @@ def link_user_assignments(user: str) -> int:
 	return updated
 
 
-def email_invitations(course: str, scope: str = "not_emailed", department: str | None = None) -> dict:
+def email_invitations(course: str, scope: str = "not_emailed", department: str | None = None, note: str | None = None, commit: bool = True) -> dict:
 	"""HR-triggered: email everyone assigned to the course who hasn't finished it.
 	scope='not_emailed' skips anyone already sent an invitation; scope='open' emails all.
 	Creates portal logins (with set-password links) for employees who have none."""
@@ -158,7 +160,7 @@ def email_invitations(course: str, scope: str = "not_emailed", department: str |
 
 		first_time = not assignment.invitation_emailed_on
 		kind = "invite" if first_time else ("overdue" if assignment.overdue else "reminder")
-		if send_assignment_email(assignment, kind=kind, password_link=password_link):
+		if send_assignment_email(assignment, kind=kind, password_link=password_link, note=note):
 			if first_time:
 				values = {"invitation_emailed_on": now_datetime()}
 			else:
@@ -167,9 +169,14 @@ def email_invitations(course: str, scope: str = "not_emailed", department: str |
 			summary["emailed"] += 1
 		else:
 			summary["emails_failed"] += 1
-		if i % 50 == 49:
+		if commit and i % 50 == 49:
 			frappe.db.commit()  # long runs: keep progress
 	return summary
+
+
+def outgoing_email_ready() -> bool:
+	"""True when Frappe has a default outgoing Email Account to send from."""
+	return bool(frappe.db.exists("Email Account", {"enable_outgoing": 1, "default_outgoing": 1}))
 
 
 def ensure_user(emp) -> tuple[str | None, bool, str | None]:
@@ -222,11 +229,13 @@ def make_password_link(user: str) -> str:
 	return frappe.get_doc("User", user)._reset_password(send_email=False)
 
 
-def _add_learner_role(user: str):
-	if not frappe.db.exists("Has Role", {"parent": user, "parenttype": "User", "role": LEARNER_ROLE}):
-		user_doc = frappe.get_doc("User", user)
-		user_doc.flags.ignore_permissions = True
-		user_doc.add_roles(LEARNER_ROLE)
+def _add_learner_role(user: str) -> bool:
+	if frappe.db.exists("Has Role", {"parent": user, "parenttype": "User", "role": LEARNER_ROLE}):
+		return False
+	user_doc = frappe.get_doc("User", user)
+	user_doc.flags.ignore_permissions = True
+	user_doc.add_roles(LEARNER_ROLE)
+	return True
 
 
 # ---------------------------------------------------------------- emails
@@ -239,7 +248,7 @@ SUBJECTS = {
 }
 
 
-def send_assignment_email(assignment, kind: str = "invite", password_link: str | None = None) -> bool:
+def send_assignment_email(assignment, kind: str = "invite", password_link: str | None = None, note: str | None = None) -> bool:
 	if not assignment.email:
 		return False
 	course = frappe.get_cached_doc("Training Course", assignment.course)
@@ -264,6 +273,7 @@ def send_assignment_email(assignment, kind: str = "invite", password_link: str |
 			"portal_url": get_url("/training"),
 			"progress": assignment.progress or 0,
 			"status": assignment.status,
+			"note": (note or "").strip(),
 		},
 		reference_doctype="Training Assignment",
 		reference_name=assignment.name,
@@ -378,7 +388,7 @@ def get_matching_employees(company=None, department=None, branch=None, designati
 # ---------------------------------------------------------------- assign to everyone
 
 
-def assign_all_active(course: str | None = None) -> dict:
+def assign_all_active(course: str | None = None, commit: bool = True) -> dict:
 	"""Silently assign every active employee who has no assignment yet in each course set
 	to 'Assign to All Active Employees' (no emails, no new logins). Employees HR
 	cancelled are left alone. HR sends invitation emails separately, when they choose."""
@@ -391,14 +401,93 @@ def assign_all_active(course: str | None = None) -> dict:
 		pending = [e for e in get_matching_employees(company=c.company) if e not in enrolled]
 		if pending:
 			results[c.name] = invite_employees(c.name, pending, notify=False)
-			frappe.db.commit()  # long runs: keep progress if a later invite fails
+			if commit:
+				frappe.db.commit()  # long runs: keep progress if a later invite fails
 	return results
 
 
+def auto_assign_courses(include_new_joiner_courses: bool = False) -> list[dict]:
+	"""Published courses that assign themselves, with the company they are limited to."""
+	flags = ["assign_to_all_active"] + (["auto_enroll_new_joiners"] if include_new_joiner_courses else [])
+	courses = {}
+	for flag in flags:
+		for c in frappe.get_all("Training Course", filters={"status": "Published", flag: 1}, fields=["name", "company"]):
+			courses[c.name] = c
+	return list(courses.values())
+
+
+def assign_employee_now(employee: str, reopen_cancelled: bool = False, include_new_joiner_courses: bool = False) -> int:
+	"""Assign one active employee, inline and silently, to every self-assigning course they
+	are missing. Needs no background worker. Returns how many assignments were made."""
+	emp = frappe.db.get_value("Employee", employee, ["status", "company"], as_dict=True)
+	if not emp or emp.status != "Active":
+		return 0
+	made = 0
+	for c in auto_assign_courses(include_new_joiner_courses):
+		if c.company and c.company != emp.company:
+			continue
+		status = frappe.db.get_value("Training Assignment", {"course": c.name, "employee": employee}, "status")
+		if status and not (reopen_cancelled and status == "Cancelled"):
+			continue  # already assigned, or HR cancelled it on purpose
+		result = invite_employee(frappe.get_doc("Training Course", c.name), employee, notify=False)
+		made += int(result["action"] in ("invited", "reinvited"))
+	return made
+
+
+def ensure_my_assignments(user: str) -> int:
+	"""Called on login and whenever the user opens Desk or /training: make sure this
+	person's active Employee record has every self-assigning course. Never raises."""
+	if not user or user in ("Guest", "Administrator"):
+		return 0
+	try:
+		employees = frappe.get_all("Employee", filters={"user_id": user, "status": "Active"}, pluck="name")
+		newly_linked = False
+		if not employees:
+			employees = _link_employee_by_email(user)
+			newly_linked = bool(employees)
+		made = sum(assign_employee_now(e) for e in employees)
+		role_added = bool(employees) and _add_learner_role(user)
+		linked = link_user_assignments(user)
+		if made or linked or role_added or newly_linked:
+			frappe.local.flags.commit = True  # also runs on GET (Desk load, /training), which Frappe won't commit otherwise
+		return made
+	except Exception:
+		frappe.log_error(title=f"Tridasa DPDP: could not assign training to {user}")
+		return 0
+
+
+def _link_employee_by_email(user: str) -> list[str]:
+	"""An active Employee with this login's email but no login linked yet: link them."""
+	email = (frappe.db.get_value("User", user, "email") or "").strip().lower()
+	if not email:
+		return []
+	for field in ("prefered_email", "company_email", "personal_email"):
+		match = frappe.get_all(
+			"Employee",
+			filters={field: email, "status": "Active", "user_id": ("is", "not set")},
+			pluck="name",
+			limit=2,
+		)
+		if len(match) == 1:
+			frappe.db.set_value("Employee", match[0], "user_id", user)
+			return match
+	return []
+
+
+INLINE_ASSIGN_LIMIT = 300  # with up to this many active employees, assign right away instead of queueing
+
+
 def enqueue_assign_all(course: str | None = None):
-	"""Background, de-duplicated. Used on publish and after every migrate (i.e. each deploy)."""
+	"""Used on publish and after every migrate. Small runs happen inline so nothing waits
+	for a background worker; big ones are queued (the daily job and logins also catch up)."""
 	if frappe.flags.in_test:
 		return
+	if frappe.db.count("Employee", {"status": "Active"}) <= INLINE_ASSIGN_LIMIT:
+		try:
+			assign_all_active(course, commit=False)
+			return
+		except Exception:
+			frappe.log_error(title="Tridasa DPDP: inline assign-all failed, queueing instead")
 	try:
 		frappe.enqueue(
 			"tridasa_dpdp.services.enrolment.assign_all_active",

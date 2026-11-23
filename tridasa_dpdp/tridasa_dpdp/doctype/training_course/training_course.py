@@ -46,7 +46,7 @@ class TrainingCourse(Document):
 
 			enqueue_assign_all(self.name)
 			frappe.msgprint(
-				_("All active employees are being assigned in the background. No emails are sent; use Actions → Email Invitations when you're ready."),
+				_("All active employees are now assigned (large companies: in the background). No emails are sent; use Actions → Email Invitations when you're ready."),
 				alert=True,
 			)
 

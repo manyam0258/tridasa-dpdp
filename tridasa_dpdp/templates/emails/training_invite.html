@@ -11,6 +11,10 @@
 
 	<p>Dear {{ employee_name }},</p>
 
+	{% if note %}
+	<div style="border-left:3px solid #234165;background:#F4F6F9;padding:10px 14px;margin:0 0 14px;color:#1F3A5C;white-space:pre-line">{{ note }}</div>
+	{% endif %}
+
 	{% if kind == "invite" %}
 	<p>As part of Tridasa's compliance with India's <b>Digital Personal Data Protection Act, 2023</b>, every employee must complete
 	<b>{{ course.course_name }}</b>. It takes about {{ minutes }} minutes: {{ slides }} short slides, then a {{ course.questions_per_attempt }}-question assessment.

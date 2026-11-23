@@ -2,7 +2,7 @@ import json
 
 import frappe
 from erpnext.setup.doctype.employee.test_employee import make_employee
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase as IntegrationTestCase
 
 from tridasa_dpdp import api
 from tridasa_dpdp.install import create_dpdp_course
@@ -13,6 +13,7 @@ class TestTrainingFlow(IntegrationTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		cls.course = create_dpdp_course()
+		frappe.db.set_value("Training Course", cls.course, "assign_to_all_active", 1)
 
 	def setUp(self):
 		frappe.set_user("Administrator")
@@ -125,3 +126,33 @@ class TestAssignAllAndLoginRedirect(IntegrationTestCase):
 		frappe.local.form_dict = frappe._dict(redirect_to="/app/todo")
 		redirect_to_pending_training(frappe._dict(user=user))
 		self.assertIsNone(frappe.cache.hget("redirect_after_login", user))
+
+	def test_new_employee_is_assigned_without_hr_or_worker(self):
+		from tridasa_dpdp.utils import LEARNER_ROLE
+
+		user = "lms.newjoiner@example.com"
+		emp = make_employee(user, company=frappe.db.get_value("Company", {}, "name"))
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+		self.assertTrue(name, "assigned inline on Employee insert")
+		self.assertEqual(frappe.db.get_value("Training Assignment", name, "user"), user)
+		self.assertIn(LEARNER_ROLE, frappe.get_roles(user))
+
+	def test_opening_desk_assigns_missing_training(self):
+		user = "lms.missed@example.com"
+		emp = make_employee(user, company=frappe.db.get_value("Company", {}, "name"))
+		frappe.db.delete("Training Assignment", {"employee": emp})  # e.g. course published while workers were down
+
+		frappe.set_user(user)
+		status = api.get_desk_training_status()
+		self.assertEqual(status["total"], 1)
+		self.assertEqual(status["pending"][0]["course"], self.course)
+		self.assertTrue(frappe.local.flags.commit, "GET request must commit the new assignment")
+
+	def test_opening_desk_does_not_reopen_cancelled(self):
+		user = "lms.cancelled@example.com"
+		emp = make_employee(user, company=frappe.db.get_value("Company", {}, "name"))
+		name = frappe.db.get_value("Training Assignment", {"course": self.course, "employee": emp})
+		frappe.db.set_value("Training Assignment", name, "status", "Cancelled")
+
+		frappe.set_user(user)
+		self.assertEqual(api.get_desk_training_status(), {"total": 0, "pending": []})

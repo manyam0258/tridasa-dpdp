@@ -18,6 +18,7 @@ frappe.ui.form.on("Training Course", {
 		if (frm.doc.status === "Published") {
 			frm.add_custom_button(__("Assign to All Active Employees"), () => assign_all(frm), __("Actions"));
 			frm.add_custom_button(__("Email Invitations…"), () => email_invitations_dialog(frm), __("Actions"));
+			frm.add_custom_button(__("Email All Employees"), () => email_invitations_dialog(frm));
 			frm.add_custom_button(__("Invite Employees"), () => invite_dialog(frm), __("Actions"));
 			frm.add_custom_button(__("Send Reminders Now"), () =>
 				frappe.confirm(__("Email a reminder to everyone who was sent an invitation and hasn't finished yet?"), () =>
@@ -122,7 +123,7 @@ function invite_dialog(frm) {
 		["company", "department", "branch", "designation"].forEach((k) => v[k] && (filters[k] = v[k]));
 		if (v.employee_list && v.employee_list.length) filters.name = ["in", v.employee_list];
 		frappe.db.count("Employee", { filters }).then((n) =>
-			d.fields_dict.preview..html(`<p><b>${n}</b> ${__("active employees match.")}</p>`)
+			d.fields_dict.preview.$wrapper.html(`<p><b>${n}</b> ${__("active employees match.")}</p>`)
 		);
 	}, 300);
 	["company", "department", "branch", "designation", "employee_list"].forEach((f) => (d.fields_dict[f].df.onchange = refresh_count));
@@ -175,25 +176,40 @@ function assign_all(frm) {
 
 function email_invitations_dialog(frm) {
 	frappe.call("tridasa_dpdp.api.get_invitation_counts", { course: frm.doc.name }).then(({ message: c }) => {
+		const warning = c.email_ready
+			? ""
+			: `<div class="alert alert-warning">${__(
+					"No default outgoing Email Account is set up, so emails can't be sent yet. Set one up in {0} (tick 'Enable Outgoing' and 'Default Outgoing'), then come back.",
+					['<a href="/app/email-account">Email Account</a>']
+			  )}</div>`;
 		const d = new frappe.ui.Dialog({
-			title: __("Email Invitations"),
+			title: __("Email Employees about {0}", [frm.doc.course_name]),
 			fields: [
 				{
 					fieldtype: "HTML",
-					options: `<p class="text-muted">${__("Sends the course link to employees who haven't finished it. Employees without a login get one, with a set-password link. Runs in the background.")}</p>`,
+					options: `${warning}<p class="text-muted">${__(
+						"Each employee gets their own link to the course. Employees without a login get one, with a set-password link. Anyone not assigned yet is assigned first. {0} employees who are already certified are not emailed.",
+						[c.certified]
+					)}</p>`,
 				},
 				{
 					fieldname: "scope",
 					fieldtype: "Select",
 					label: __("Send to"),
 					reqd: 1,
-					default: "not_emailed",
+					default: "open",
 					options: [
-						{ value: "not_emailed", label: __("Not emailed yet ({0})", [c.not_emailed]) },
-						{ value: "open", label: __("Everyone who hasn't finished ({0})", [c.open]) },
+						{ value: "open", label: __("All employees who haven't finished ({0})", [c.open]) },
+						{ value: "not_emailed", label: __("Only those never emailed ({0})", [c.not_emailed]) },
 					],
 				},
 				{ fieldname: "department", fieldtype: "Link", options: "Department", label: __("Only this department (optional)") },
+				{
+					fieldname: "note",
+					fieldtype: "Small Text",
+					label: __("Message from HR (optional)"),
+					description: __("Shown at the top of the email, e.g. the deadline or why this matters."),
+				},
 			],
 			primary_action_label: __("Send Emails"),
 			primary_action(values) {
@@ -201,11 +217,24 @@ function email_invitations_dialog(frm) {
 				frappe.confirm(__("Email up to {0} employees now?", [n]), () => {
 					d.hide();
 					frappe
-						.call("tridasa_dpdp.api.email_invitations", { course: frm.doc.name, scope: values.scope, department: values.department })
-						.then(() => frappe.show_alert({ message: __("Sending emails in the background…"), indicator: "blue" }));
+						.call({
+							method: "tridasa_dpdp.api.email_invitations",
+							args: { course: frm.doc.name, scope: values.scope, department: values.department, note: values.note },
+							freeze: true,
+							freeze_message: __("Sending emails…"),
+						})
+						.then(({ message }) => {
+							if (message.queued) {
+								frappe.msgprint(__("Sending emails in the background. You'll see a summary here when it's done."));
+								return;
+							}
+							show_email_summary(message);
+							render_funnel(frm);
+						});
 				});
 			},
 		});
+		if (!c.email_ready) d.get_primary_btn().prop("disabled", true);
 		d.show();
 	});
 }

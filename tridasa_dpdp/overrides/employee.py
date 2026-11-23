@@ -1,4 +1,6 @@
-"""Keep training enrolment in step with the employee lifecycle."""
+"""Keep training enrolment in step with the employee lifecycle.
+
+Assignment happens inline (no background worker needed) and silently: no email, no new login."""
 
 import frappe
 from frappe import _
@@ -9,27 +11,7 @@ from tridasa_dpdp.utils import OPEN_STATUSES
 
 def enroll_new_joiner(doc, method=None):
 	if doc.status == "Active":
-		_enqueue_invites(doc.name)
-
-
-def _enqueue_invites(employee: str):
-	courses = set(
-		frappe.get_all("Training Course", filters={"status": "Published", "auto_enroll_new_joiners": 1}, pluck="name")
-	) | set(frappe.get_all("Training Course", filters={"status": "Published", "assign_to_all_active": 1}, pluck="name"))
-	for name in courses:
-		frappe.enqueue(
-			"tridasa_dpdp.overrides.employee._invite",
-			course=name,
-			employee=employee,
-			enqueue_after_commit=True,
-		)
-
-
-def _invite(course, employee):
-	from tridasa_dpdp.services.enrolment import invite_employee
-
-	# Silent: HR sends invitation emails when they choose ("Email Invitations")
-	invite_employee(frappe.get_doc("Training Course", course), employee, notify=False)
+		_assign(doc.name, include_new_joiner_courses=True)
 
 
 def on_status_change(doc, method=None):
@@ -39,10 +21,12 @@ def on_status_change(doc, method=None):
 		from tridasa_dpdp.services.enrolment import link_user_assignments
 
 		link_user_assignments(doc.user_id)
+		if doc.status == "Active":
+			_assign(doc.name)  # e.g. a login added to an employee who was missed earlier
 	if not doc.has_value_changed("status"):
 		return
 	if doc.status == "Active":
-		_enqueue_invites(doc.name)  # invite_employee re-opens their cancelled assignment
+		_assign(doc.name, reopen_cancelled=True, include_new_joiner_courses=True)
 		return
 	for name in frappe.get_all(
 		"Training Assignment", filters={"employee": doc.name, "status": ("in", OPEN_STATUSES)}, pluck="name"
@@ -52,3 +36,15 @@ def on_status_change(doc, method=None):
 			name,
 			{"status": "Cancelled", "overdue": 0, "cancel_reason": _("Employee status changed to {0} on {1}").format(doc.status, now_datetime().date())},
 		)
+
+
+def _assign(employee: str, **kwargs):
+	"""Never let a training problem block HR from saving an Employee."""
+	from tridasa_dpdp.services.enrolment import assign_employee_now
+
+	frappe.db.savepoint("tridasa_dpdp_assign")
+	try:
+		assign_employee_now(employee, **kwargs)
+	except Exception:
+		frappe.db.rollback(save_point="tridasa_dpdp_assign")
+		frappe.log_error(title=f"Tridasa DPDP: could not assign training to {employee}")
