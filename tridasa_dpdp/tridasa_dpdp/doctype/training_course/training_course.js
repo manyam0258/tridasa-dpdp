@@ -29,6 +29,7 @@ frappe.ui.form.on("Training Course", {
 			, __("Actions"));
 			frm.page.set_inner_btn_group_as_primary(__("Actions"));
 		}
+		show_assignment_warning(frm);
 		render_funnel(frm);
 		frappe.realtime.off("tridasa_dpdp_emails_done");
 		frappe.realtime.on("tridasa_dpdp_emails_done", (data) => {
@@ -44,6 +45,23 @@ frappe.ui.form.on("Training Course", {
 		});
 	},
 });
+
+// Nobody gets this course automatically unless it is Published with 'Assign to All' on.
+function show_assignment_warning(frm) {
+	if (frm.doc.status !== "Published") {
+		frm.set_intro(
+			__("This course is in {0}, so nobody is assigned automatically and users see 'No trainings assigned yet'. Set Status to Published and save.", [__(frm.doc.status)]),
+			"orange"
+		);
+	} else if (!frm.doc.assign_to_all_active) {
+		frm.set_intro(
+			__("'Assign to All Active Employees' is off, so only people HR invites get this course. Tick it and save to assign everyone."),
+			"orange"
+		);
+	} else {
+		frm.set_intro("");
+	}
+}
 
 function render_funnel(frm) {
 	frappe.call("tridasa_dpdp.api.get_course_dashboard", { course: frm.doc.name }).then(({ message: s }) => {

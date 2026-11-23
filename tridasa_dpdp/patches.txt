@@ -6,3 +6,5 @@
 # Patches added in this section will be executed after doctypes are migrated
 tridasa_dpdp.patches.enable_assign_all_and_login_redirect
 tridasa_dpdp.patches.backfill_invitation_emailed_on
+tridasa_dpdp.patches.fix_user_id_letter_case
+tridasa_dpdp.patches.relink_employees_to_used_logins

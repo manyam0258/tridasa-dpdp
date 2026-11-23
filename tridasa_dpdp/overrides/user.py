@@ -6,7 +6,9 @@ from frappe.utils import today
 
 
 def on_update(doc, method=None):
-	if not doc.has_value_changed("enabled") or frappe.flags.in_install:
+	if doc.get_doc_before_save() is None or frappe.flags.in_install:
+		return  # new logins are picked up at login / daily; HR may be about to link an Employee
+	if not doc.has_value_changed("enabled"):
 		return
 	from tridasa_dpdp.services import enrolment
 

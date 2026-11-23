@@ -46,7 +46,10 @@
 	{% else %}
 	<div class="panel empty">
 		<h3>No trainings assigned yet</h3>
-		<p>Mandatory trainings appear here automatically. If you expected one, ask HR to check that your login is active.</p>
+		<p>Mandatory trainings appear here automatically. This is why you don't have one yet:</p>
+		<ul class="why">
+			{% for reason in no_training_reasons %}<li>{{ frappe.utils.escape_html(reason) }}</li>{% endfor %}
+		</ul>
 	</div>
 	{% endif %}
 </section>
