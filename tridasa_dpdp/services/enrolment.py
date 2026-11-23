@@ -7,6 +7,8 @@ from frappe.utils import add_days, date_diff, format_date, getdate, now_datetime
 
 from tridasa_dpdp.utils import LEARNER_ROLE, OPEN_STATUSES, course_url, get_url, safe_sendmail
 
+EXTERNAL_ROLES = ("Customer", "Supplier")
+
 EMPLOYEE_FIELDS = [
 	"name",
 	"employee_name",
@@ -52,6 +54,8 @@ def invite_employee(
 	if not emp or emp.status != "Active":
 		return {"action": "skipped"}
 
+	if emp.user_id:
+		adopt_user_assignments(employee, emp.user_id)  # their login may have been assigned before it was linked
 	existing = frappe.db.get_value(
 		"Training Assignment", {"course": course_doc.name, "employee": employee}, ["name", "status"], as_dict=True
 	)
@@ -68,30 +72,10 @@ def invite_employee(
 		if user:
 			_add_learner_role(user)  # so 'My Trainings' shows in their menu and portal home
 
-	due = add_days(today(), due_in_days if due_in_days is not None else (course_doc.due_in_days or 14))
-	if existing:
-		assignment = frappe.get_doc("Training Assignment", existing.name)
-		assignment.reset_for_new_cycle(due)
-		action = "reinvited"
-	else:
-		assignment = frappe.get_doc(
-			{
-				"doctype": "Training Assignment",
-				"course": course_doc.name,
-				"employee": employee,
-				"due_date": due,
-			}
-		)
-		action = "invited"
-
-	assignment.user = user
-	assignment.email = (frappe.db.get_value("User", user, "email") if user else None) or employee_email(emp)
-	assignment.invited_on = now_datetime()
-	assignment.flags.ignore_permissions = True
-	if assignment.is_new():
-		assignment.insert()
-	else:
-		assignment.save()
+	email = (frappe.db.get_value("User", user, "email") if user else None) or employee_email(emp)
+	assignment, action = _upsert_assignment(
+		course_doc, existing, {"employee": employee, "user": user, "email": email}, due_in_days
+	)
 
 	result = {"action": action, "assignment": assignment.name, "user_created": user_created}
 	if notify:
@@ -101,6 +85,103 @@ def invite_employee(
 		if result["emailed"]:
 			assignment.db_set("invitation_emailed_on", now_datetime(), update_modified=False)
 	return result
+
+
+def invite_user(course_doc, user: str, due_in_days: int | None = None, kind: str = "invite", notify: bool = False) -> dict:
+	"""Assign a login that has no Employee record. Tracked by the login alone."""
+	if not frappe.db.get_value("User", user, "enabled"):
+		return {"action": "skipped"}
+	existing = frappe.db.get_value(
+		"Training Assignment",
+		{"course": course_doc.name, "user": user, "employee": ("is", "not set")},
+		["name", "status"],
+		as_dict=True,
+	)
+	if existing and existing.status not in ("Expired", "Cancelled"):
+		return {"action": "already_enrolled", "assignment": existing.name}
+
+	_add_learner_role(user)
+	values = {"employee": None, "user": user, "email": frappe.db.get_value("User", user, "email")}
+	assignment, action = _upsert_assignment(course_doc, existing, values, due_in_days)
+	result = {"action": action, "assignment": assignment.name, "user_created": False}
+	if notify:
+		result["emailed"] = send_assignment_email(assignment, kind="recert" if existing else kind)
+		if result["emailed"]:
+			assignment.db_set("invitation_emailed_on", now_datetime(), update_modified=False)
+	return result
+
+
+def _upsert_assignment(course_doc, existing, values: dict, due_in_days: int | None):
+	"""Create the assignment, or start a new cycle on an expired/cancelled one."""
+	due = add_days(today(), due_in_days if due_in_days is not None else (course_doc.due_in_days or 14))
+	if existing:
+		assignment = frappe.get_doc("Training Assignment", existing.name)
+		assignment.reset_for_new_cycle(due)
+		action = "reinvited"
+	else:
+		assignment = frappe.get_doc({"doctype": "Training Assignment", "course": course_doc.name, "due_date": due})
+		action = "invited"
+	assignment.update(values)
+	assignment.invited_on = now_datetime()
+	assignment.flags.ignore_permissions = True
+	if assignment.is_new():
+		assignment.insert()
+	else:
+		assignment.save()
+	return assignment, action
+
+
+def adopt_user_assignments(employee: str, user: str) -> int:
+	"""A login assigned without an Employee record has now been linked to one: move its
+	assignments onto the Employee (keeping progress), or drop duplicates."""
+	moved = 0
+	for r in frappe.get_all(
+		"Training Assignment",
+		filters={"user": user, "employee": ("is", "not set")},
+		fields=["name", "course", "status"],
+	):
+		if frappe.db.exists("Training Assignment", {"course": r.course, "employee": employee}):
+			if r.status != "Cancelled":
+				frappe.db.set_value(
+					"Training Assignment",
+					r.name,
+					{"status": "Cancelled", "overdue": 0, "cancel_reason": _("Replaced by the assignment for Employee {0}").format(employee)},
+				)
+			continue
+		doc = frappe.get_doc("Training Assignment", r.name)
+		doc.employee = employee
+		doc.flags.ignore_permissions = True
+		doc.save()  # fetches name, company, department, manager from the Employee
+		moved += 1
+	return moved
+
+
+def users_without_employee() -> list[str]:
+	"""Enabled logins with no Employee record at all (any status). Customer and supplier
+	portal logins are left out: they are not staff."""
+	employee_users = set(frappe.get_all("Employee", filters={"user_id": ("is", "set")}, pluck="user_id"))
+	external = set(
+		frappe.get_all(
+			"Has Role", filters={"parenttype": "User", "role": ("in", EXTERNAL_ROLES)}, pluck="parent", distinct=True
+		)
+	)
+	users = frappe.get_all(
+		"User",
+		filters={"enabled": 1, "name": ("not in", ("Administrator", "Guest")), "user_type": ("in", ("System User", "Website User"))},
+		pluck="name",
+	)
+	return [u for u in users if u not in employee_users and u not in external]
+
+
+def is_user_without_employee(user: str) -> bool:
+	if not user or user in ("Administrator", "Guest"):
+		return False
+	u = frappe.db.get_value("User", user, ["enabled", "user_type"], as_dict=True)
+	if not u or not u.enabled or u.user_type not in ("System User", "Website User"):
+		return False
+	if frappe.db.exists("Employee", {"user_id": user}):
+		return False
+	return not frappe.db.exists("Has Role", {"parenttype": "User", "parent": user, "role": ("in", EXTERNAL_ROLES)})
 
 
 def employee_email(emp) -> str | None:
@@ -149,10 +230,14 @@ def email_invitations(course: str, scope: str = "not_emailed", department: str |
 	names = frappe.get_all("Training Assignment", filters=filters, pluck="name", order_by="employee_name asc")
 	for i, name in enumerate(names):
 		assignment = frappe.get_doc("Training Assignment", name)
-		emp = frappe.db.get_value("Employee", assignment.employee, EMPLOYEE_FIELDS, as_dict=True)
-		user, created, password_link = ensure_user(emp)
+		if assignment.employee:
+			emp = frappe.db.get_value("Employee", assignment.employee, EMPLOYEE_FIELDS, as_dict=True)
+			user, created, password_link = ensure_user(emp)
+		else:  # a login without an Employee record
+			enabled = assignment.user and frappe.db.get_value("User", assignment.user, "enabled")
+			user, created, password_link = (assignment.user if enabled else None), False, None
 		if not user:
-			summary["no_email"].append(assignment.employee)
+			summary["no_email"].append(assignment.employee or assignment.user or assignment.name)
 			continue
 		summary["users_created"] += int(created)
 		if assignment.user != user:
@@ -365,14 +450,18 @@ def expire_certificates():
 	for cert in frappe.get_all(
 		"Training Certificate",
 		filters={"status": "Active", "valid_until": ("<", today())},
-		fields=["name", "assignment", "course", "employee"],
+		fields=["name", "assignment", "course", "employee", "user"],
 	):
 		frappe.db.set_value("Training Certificate", cert.name, "status", "Expired")
 		if cert.assignment:
 			frappe.db.set_value("Training Assignment", cert.assignment, "status", "Expired")
 		course = frappe.get_doc("Training Course", cert.course)
-		if course.status == "Published":
+		if course.status != "Published":
+			continue
+		if cert.employee:
 			invite_employee(course, cert.employee, kind="recert")
+		elif cert.user:
+			invite_user(course, cert.user, kind="recert")
 
 
 def get_matching_employees(company=None, department=None, branch=None, designation=None, employees=None) -> list[str]:
@@ -389,21 +478,47 @@ def get_matching_employees(company=None, department=None, branch=None, designati
 
 
 def assign_all_active(course: str | None = None, commit: bool = True) -> dict:
-	"""Silently assign every active employee who has no assignment yet in each course set
-	to 'Assign to All Active Employees' (no emails, no new logins). Employees HR
-	cancelled are left alone. HR sends invitation emails separately, when they choose."""
-	filters = {"status": "Published", "assign_to_all_active": 1}
+	"""Silently assign every active employee, and every enabled login with no Employee
+	record, who has no assignment yet in each course set to 'Assign to All Active
+	Employees' (no emails, no new logins). Anyone HR cancelled is left alone. HR sends
+	invitation emails separately, when they choose."""
+	filters = {"status": "Published"}
 	if course:
-		filters["name"] = course
+		filters["name"] = course  # asked for explicitly (HR button, publish): assign even if the flag is off
+	else:
+		filters["assign_to_all_active"] = 1
 	results = {}
 	for c in frappe.get_all("Training Course", filters=filters, fields=["name", "company"]):
 		enrolled = set(frappe.get_all("Training Assignment", filters={"course": c.name}, pluck="employee"))
 		pending = [e for e in get_matching_employees(company=c.company) if e not in enrolled]
-		if pending:
+		pending_users = [] if c.company else unassigned_users(c.name)  # no Employee, so no company to match
+		if pending or pending_users:
 			results[c.name] = invite_employees(c.name, pending, notify=False)
+			course_doc = frappe.get_doc("Training Course", c.name)
+			results[c.name]["users_assigned"] = sum(
+				invite_user(course_doc, u)["action"] in ("invited", "reinvited") for u in pending_users
+			)
 			if commit:
 				frappe.db.commit()  # long runs: keep progress if a later invite fails
 	return results
+
+
+def cancel_user_assignments(user: str, reason: str) -> int:
+	"""A login without an Employee record was disabled: drop its open training."""
+	names = frappe.get_all(
+		"Training Assignment",
+		filters={"user": user, "employee": ("is", "not set"), "status": ("in", OPEN_STATUSES)},
+		pluck="name",
+	)
+	for name in names:
+		frappe.db.set_value("Training Assignment", name, {"status": "Cancelled", "overdue": 0, "cancel_reason": reason})
+	return len(names)
+
+
+def unassigned_users(course: str) -> list[str]:
+	"""Logins without an Employee record that have no assignment (of any status) in this course."""
+	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="user"))
+	return [u for u in users_without_employee() if u not in enrolled]
 
 
 def auto_assign_courses(include_new_joiner_courses: bool = False) -> list[dict]:
@@ -419,9 +534,11 @@ def auto_assign_courses(include_new_joiner_courses: bool = False) -> list[dict]:
 def assign_employee_now(employee: str, reopen_cancelled: bool = False, include_new_joiner_courses: bool = False) -> int:
 	"""Assign one active employee, inline and silently, to every self-assigning course they
 	are missing. Needs no background worker. Returns how many assignments were made."""
-	emp = frappe.db.get_value("Employee", employee, ["status", "company"], as_dict=True)
+	emp = frappe.db.get_value("Employee", employee, ["status", "company", "user_id"], as_dict=True)
 	if not emp or emp.status != "Active":
 		return 0
+	if emp.user_id:
+		adopt_user_assignments(employee, emp.user_id)
 	made = 0
 	for c in auto_assign_courses(include_new_joiner_courses):
 		if c.company and c.company != emp.company:
@@ -430,6 +547,25 @@ def assign_employee_now(employee: str, reopen_cancelled: bool = False, include_n
 		if status and not (reopen_cancelled and status == "Cancelled"):
 			continue  # already assigned, or HR cancelled it on purpose
 		result = invite_employee(frappe.get_doc("Training Course", c.name), employee, notify=False)
+		made += int(result["action"] in ("invited", "reinvited"))
+	return made
+
+
+def assign_user_now(user: str, reopen_cancelled: bool = False) -> int:
+	"""Same as assign_employee_now, for a login with no Employee record. Courses limited
+	to one company are skipped: without an Employee we don't know their company."""
+	if not is_user_without_employee(user):
+		return 0
+	made = 0
+	for c in auto_assign_courses():
+		if c.company:
+			continue
+		status = frappe.db.get_value(
+			"Training Assignment", {"course": c.name, "user": user, "employee": ("is", "not set")}, "status"
+		)
+		if status and not (reopen_cancelled and status == "Cancelled"):
+			continue
+		result = invite_user(frappe.get_doc("Training Course", c.name), user)
 		made += int(result["action"] in ("invited", "reinvited"))
 	return made
 
@@ -445,8 +581,12 @@ def ensure_my_assignments(user: str) -> int:
 		if not employees:
 			employees = _link_employee_by_email(user)
 			newly_linked = bool(employees)
-		made = sum(assign_employee_now(e) for e in employees)
-		role_added = bool(employees) and _add_learner_role(user)
+		if employees:
+			made = sum(assign_employee_now(e) for e in employees)
+			role_added = _add_learner_role(user)
+		else:
+			made = assign_user_now(user)
+			role_added = is_user_without_employee(user) and _add_learner_role(user)
 		linked = link_user_assignments(user)
 		if made or linked or role_added or newly_linked:
 			frappe.local.flags.commit = True  # also runs on GET (Desk load, /training), which Frappe won't commit otherwise

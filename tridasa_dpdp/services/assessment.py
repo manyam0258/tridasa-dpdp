@@ -264,7 +264,7 @@ def notify_attempts_exhausted(assignment: str):
 			"<p>Open the assignment to grant another attempt: {5}</p>"
 		).format(
 			frappe.utils.escape_html(doc.employee_name),
-			doc.employee,
+			doc.employee or doc.user,
 			doc.course,
 			doc.attempts_used,
 			doc.best_score or 0,

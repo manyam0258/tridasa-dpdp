@@ -13,7 +13,7 @@
    "label": "Pending by Department"
   }
  ],
- "content": "[{\"id\": \"h1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>DPDP Act Awareness: who has completed it</b></span>\", \"col\": 12}}, {\"id\": \"nc0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Invited\", \"col\": 4}}, {\"id\": \"nc1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Slides Completed\", \"col\": 4}}, {\"id\": \"nc2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Assessment Attempted\", \"col\": 4}}, {\"id\": \"nc3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Certified\", \"col\": 6}}, {\"id\": \"nc4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Training Overdue\", \"col\": 6}}, {\"id\": \"c1\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Training Status\", \"col\": 4}}, {\"id\": \"c2\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Certified by Department\", \"col\": 4}}, {\"id\": \"c3\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Pending by Department\", \"col\": 4}}, {\"id\": \"sp\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"h2\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\", \"col\": 12}}, {\"id\": \"s0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Courses\", \"col\": 3}}, {\"id\": \"s1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Assignments\", \"col\": 3}}, {\"id\": \"s2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Compliance Report\", \"col\": 3}}, {\"id\": \"s3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Certificates\", \"col\": 3}}, {\"id\": \"s4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question Bank\", \"col\": 3}}, {\"id\": \"s5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attempts\", \"col\": 3}}, {\"id\": \"s6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Learner Portal\", \"col\": 3}}, {\"id\": \"sp2\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"card1\", \"type\": \"card\", \"data\": {\"card_name\": \"Training\", \"col\": 4}}, {\"id\": \"card2\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"my_h\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>My DPDP training</b></span>\", \"col\": 12}}, {\"id\": \"my_s\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"My Trainings\", \"col\": 4}}, {\"id\": \"my_sp\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"h1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>For HR: who has completed DPDP Act Awareness</b></span>\", \"col\": 12}}, {\"id\": \"nc0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Invited\", \"col\": 4}}, {\"id\": \"nc1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Slides Completed\", \"col\": 4}}, {\"id\": \"nc2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Assessment Attempted\", \"col\": 4}}, {\"id\": \"nc3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Employees Certified\", \"col\": 6}}, {\"id\": \"nc4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Training Overdue\", \"col\": 6}}, {\"id\": \"c1\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Training Status\", \"col\": 4}}, {\"id\": \"c2\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Certified by Department\", \"col\": 4}}, {\"id\": \"c3\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Pending by Department\", \"col\": 4}}, {\"id\": \"sp\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"h2\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Shortcuts</b></span>\", \"col\": 12}}, {\"id\": \"s0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Courses\", \"col\": 3}}, {\"id\": \"s1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Assignments\", \"col\": 3}}, {\"id\": \"s2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Compliance Report\", \"col\": 3}}, {\"id\": \"s3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Certificates\", \"col\": 3}}, {\"id\": \"s4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question Bank\", \"col\": 3}}, {\"id\": \"s5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Attempts\", \"col\": 3}}, {\"id\": \"sp2\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"card1\", \"type\": \"card\", \"data\": {\"card_name\": \"Training\", \"col\": 4}}, {\"id\": \"card2\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
  "creation": "2026-11-10 14:10:18.983059",
  "custom_blocks": [],
  "docstatus": 0,
@@ -105,7 +105,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-10 14:10:18.983059",
+ "modified": "2026-11-23 08:34:25.350406",
  "modified_by": "Administrator",
  "module": "Tridasa DPDP",
  "name": "DPDP Academy",
@@ -134,17 +134,7 @@
  "owner": "Administrator",
  "public": 1,
  "quick_lists": [],
- "roles": [
-  {
-   "role": "Training Manager"
-  },
-  {
-   "role": "HR Manager"
-  },
-  {
-   "role": "System Manager"
-  }
- ],
+ "roles": [],
  "sequence_id": 30.0,
  "shortcuts": [
   {
@@ -193,7 +183,7 @@
   {
    "color": "Red",
    "doc_view": "",
-   "label": "Learner Portal",
+   "label": "My Trainings",
    "type": "URL",
    "url": "/training"
   }

@@ -65,7 +65,7 @@
    "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
-   "reqd": 1
+   "description": "Empty for users with no Employee record; they are tracked by their login."
   },
   {
    "fetch_from": "employee.employee_name",
@@ -327,7 +327,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-10 13:59:28.222176",
+ "modified": "2026-11-23 08:32:18.289646",
  "modified_by": "Administrator",
  "module": "Tridasa DPDP",
  "name": "Training Assignment",
