@@ -30,7 +30,7 @@
 			{% if result.status != 'Active' %}<p class="err">This certificate is {{ result.status|lower }} and should not be accepted as proof of current training.</p>{% endif %}
 		</div>
 		{% else %}
-		<div class="panel"><div class="verdict bad"><span class="seal" aria-hidden="true">?</span><p class="err" style="flex:1">No certificate with number <span class="mono">{{ frappe.utils.escape_html(query) }}</span> was found. Check the number and try again, or contact Tridasa HR.</p></div></div>
+		<div class="panel"><div class="verdict bad"><span class="seal" aria-hidden="true">?</span><p class="err" style="flex:1">No certificate with number <span class="mono">{{ frappe.utils.escape_html(query) }}</span> was found. Check the number and try again, or contact the Tridasa IT department.</p></div></div>
 		{% endif %}
 	{% endif %}
 </section>

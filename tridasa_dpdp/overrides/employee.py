@@ -39,7 +39,7 @@ def on_status_change(doc, method=None):
 
 
 def _assign(employee: str, **kwargs):
-	"""Never let a training problem block HR from saving an Employee."""
+	"""Never let a training problem block anyone from saving an Employee."""
 	from tridasa_dpdp.services.enrolment import assign_employee_now
 
 	frappe.db.savepoint("tridasa_dpdp_assign")

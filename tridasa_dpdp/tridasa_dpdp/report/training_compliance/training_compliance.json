@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": null,
- "modified": "2026-11-10 14:10:18.797504",
+ "modified": "2026-11-24 05:01:30.345372",
  "modified_by": "Administrator",
  "module": "Tridasa DPDP",
  "name": "Training Compliance",
@@ -22,9 +22,6 @@
  "roles": [
   {
    "role": "Training Manager"
-  },
-  {
-   "role": "HR Manager"
   },
   {
    "role": "System Manager"
