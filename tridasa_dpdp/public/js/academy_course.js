@@ -118,8 +118,8 @@
 		const left = a.attempts_left === null ? "Unlimited" : a.attempts_left;
 		let banner = "";
 		if (a.overdue && !certified()) banner = `<div class="callout"><b>Overdue</b><p>This training was due on ${esc(a.due_label)}. Please complete it today.</p></div>`;
-		else if (a.status === "Assessment Failed" && !a.can_attempt) banner = `<div class="callout"><b>No attempts left</b><p>You've used all ${esc(a.attempts_used)} attempts. HR has been notified and can grant another one. Meanwhile, re-read the slides.</p></div>`;
-		else if (a.status === "Expired") banner = `<div class="callout"><b>Certificate expired</b><p>Your certificate has lapsed. HR will re-enrol you for the refreshed course.</p></div>`;
+		else if (a.status === "Assessment Failed" && !a.can_attempt) banner = `<div class="callout"><b>No attempts left</b><p>You've used all ${esc(a.attempts_used)} attempts. The IT department has been notified and can grant another one. Meanwhile, re-read the slides.</p></div>`;
+		else if (a.status === "Expired") banner = `<div class="callout"><b>Certificate expired</b><p>Your certificate has lapsed. The IT department will re-enrol you for the refreshed course.</p></div>`;
 
 		root.innerHTML = `<section class="view">
 			<div class="hero-split"><div class="hero">
@@ -199,7 +199,7 @@
 		if (certified()) return go("#certificate");
 		if (paper) return renderQuiz();
 		if (!a.can_attempt) {
-			root.innerHTML = `<section class="view">${journey("assessment")}<div class="panel empty"><h3>No attempts left</h3><p>You've used all your attempts. HR has been notified and can grant another one.</p><a class="btn ghost" href="#slide-1">Re-read the slides</a></div></section>`;
+			root.innerHTML = `<section class="view">${journey("assessment")}<div class="panel empty"><h3>No attempts left</h3><p>You've used all your attempts. The IT department has been notified and can grant another one.</p><a class="btn ghost" href="#slide-1">Re-read the slides</a></div></section>`;
 			return;
 		}
 		const left = a.attempts_left === null ? "unlimited attempts" : `${a.attempts_left} attempt${a.attempts_left === 1 ? "" : "s"} left`;
@@ -212,7 +212,7 @@
 					<li>One question from each area of the course, drawn from a larger bank. Every attempt gets a fresh paper.</li>
 					${c.time_limit ? `<li>You have <b>${esc(c.time_limit)} minutes</b>. The timer keeps running if you leave the page, and answers are submitted automatically when it ends.</li>` : ""}
 					<li>Starting uses an attempt. You have <b>${esc(left)}</b>.</li>
-					<li>Answer on your own. Your result goes to HR.</li>
+					<li>Answer on your own. Your result goes to the IT department.</li>
 				</ul>
 				<label class="check"><input type="checkbox" id="honour"> I have read the course and will answer on my own.</label>
 				<p class="err" id="err" hidden></p>
@@ -319,7 +319,7 @@
 		let msg;
 		if (passed) msg = `Well done${first ? ", " + esc(first) : ""}. Your certificate number is <b class="mono">${esc(r.certificate || "")}</b>.`;
 		else if (r.status === "Timed Out") msg = "Time ran out before your answers reached us, so this attempt counts as not passed.";
-		else if (r.attempts_left === 0) msg = "You've used all your attempts. HR has been notified and can grant another one.";
+		else if (r.attempts_left === 0) msg = "You've used all your attempts. The IT department has been notified and can grant another one.";
 		else msg = "Re-read the slides for the questions you missed, then try again. You'll get a different paper.";
 
 		const review = r.review && lastPaper

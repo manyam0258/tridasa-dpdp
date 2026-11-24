@@ -55,7 +55,7 @@ function show_assignment_warning(frm) {
 		);
 	} else if (!frm.doc.assign_to_all_active) {
 		frm.set_intro(
-			__("'Assign to All Active Employees' is off, so only people HR invites get this course. Tick it and save to assign everyone."),
+			__("'Assign to All Active Employees' is off, so only people the IT department invites get this course. Tick it and save to assign everyone."),
 			"orange"
 		);
 	} else {
@@ -234,7 +234,7 @@ function email_invitations_dialog(frm) {
 				{
 					fieldname: "note",
 					fieldtype: "Small Text",
-					label: __("Message from HR (optional)"),
+					label: __("Message from the IT department (optional)"),
 					description: __("Shown at the top of the email, e.g. the deadline or why this matters."),
 				},
 			],

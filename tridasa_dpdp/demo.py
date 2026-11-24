@@ -60,7 +60,7 @@ def make_demo():
 		emp.insert()
 		if first == "Ananya":
 			hr_head = emp.name
-			frappe.get_doc("User", user).add_roles("Training Manager", "HR Manager")
+			frappe.get_doc("User", user).add_roles("Training Manager")
 	frappe.db.commit()
 	print(frappe.get_all("Employee", fields=["name", "employee_name", "department", "user_id", "company_email"]))
 

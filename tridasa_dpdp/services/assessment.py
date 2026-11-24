@@ -25,7 +25,7 @@ def build_paper(course, exclude: set[str] | None = None) -> list[dict]:
 	):
 		pools[q.topic].append(q.name)
 	if sum(len(p) for p in pools.values()) < course.questions_per_attempt:
-		frappe.throw(_("The question bank for this course is too small. Please contact HR."))
+		frappe.throw(_("The question bank for this course is too small. Please contact the IT department."))
 
 	for pool in pools.values():
 		_rng.shuffle(pool)
@@ -69,7 +69,7 @@ def start_attempt(assignment) -> "frappe.model.document.Document":
 	if (assignment.chapters_read or 0) < len(course.chapters):
 		frappe.throw(_("Finish all slides before starting the assessment."))
 	if attempts_left(course, assignment) == 0:
-		frappe.throw(_("You have used all your attempts. HR has been notified and can grant another attempt."))
+		frappe.throw(_("You have used all your attempts. The IT department has been notified and can grant another attempt."))
 
 	seen = set(
 		frappe.get_all(
@@ -264,7 +264,7 @@ def notify_attempts_exhausted(assignment: str):
 			"<p>Open the assignment to grant another attempt: {5}</p>"
 		).format(
 			frappe.utils.escape_html(doc.employee_name),
-			doc.employee or doc.user,
+			doc.employee,
 			doc.course,
 			doc.attempts_used,
 			doc.best_score or 0,

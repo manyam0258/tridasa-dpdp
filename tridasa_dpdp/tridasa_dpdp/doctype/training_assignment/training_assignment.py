@@ -11,19 +11,14 @@ from tridasa_dpdp.utils import OPEN_STATUSES, attempts_left
 
 class TrainingAssignment(Document):
 	def validate(self):
-		if not self.employee and not self.user:
-			frappe.throw(_("Set either an Employee or a User."))
-		if not self.employee:
-			self.employee_name = frappe.utils.get_fullname(self.user)
-			for field in ("company", "department", "designation", "branch", "reports_to"):
-				self.set(field, None)
 		self.validate_unique()
 		self.update_progress()
 		self.overdue = int(bool(self.status in OPEN_STATUSES and self.due_date and getdate(self.due_date) < getdate(today())))
 
 	def validate_unique(self):
-		key = {"employee": self.employee} if self.employee else {"user": self.user}
-		dup = frappe.db.exists("Training Assignment", {"course": self.course, **key, "name": ("!=", self.name)})
+		dup = frappe.db.exists(
+			"Training Assignment", {"course": self.course, "employee": self.employee, "name": ("!=", self.name)}
+		)
 		if dup:
 			frappe.throw(_("{0} is already enrolled in this course ({1}).").format(self.employee_name, dup))
 
@@ -96,13 +91,10 @@ class TrainingAssignment(Document):
 
 		if not self.can_still_finish():
 			frappe.throw(_("Nothing to remind about: status is {0}.").format(self.status))
-		if self.employee:
-			emp = frappe.db.get_value("Employee", self.employee, EMPLOYEE_FIELDS, as_dict=True)
-			user, _created, link = ensure_user(emp)  # creates a portal login if they have none
-			if not user:
-				frappe.throw(_("{0} has no email address. Add one on the Employee record first.").format(self.employee_name))
-		else:
-			user, link = self.user, None  # a login without an Employee record
+		emp = frappe.db.get_value("Employee", self.employee, EMPLOYEE_FIELDS, as_dict=True)
+		user, _created, link = ensure_user(emp)  # creates a portal login if they have none
+		if not user:
+			frappe.throw(_("{0} has no email address. Add one on the Employee record first.").format(self.employee_name))
 		if self.user != user:
 			self.db_set({"user": user, "email": frappe.db.get_value("User", user, "email")})
 

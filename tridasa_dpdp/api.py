@@ -240,7 +240,7 @@ def _count_unassigned(course: str) -> int:
 	doc = frappe.get_doc("Training Course", course)
 	enrolled = set(frappe.get_all("Training Assignment", filters={"course": course}, pluck="employee"))
 	employees = sum(1 for e in enrolment.get_matching_employees(company=doc.company) if e not in enrolled)
-	return employees + len(enrolment.unassigned_users(course))
+	return employees
 
 
 @frappe.whitelist()
@@ -260,7 +260,7 @@ def get_invitation_counts(course: str) -> dict:
 
 @frappe.whitelist(methods=["POST"])
 def email_invitations(course: str, scope: str = "open", department: str | None = None, note: str | None = None) -> dict:
-	"""HR emails every active employee who hasn't finished the course (or only those not
+	"""The IT department emails every active employee who hasn't finished the course (or only those not
 	emailed yet). Anyone not assigned yet is assigned first. Normal-sized runs happen right
 	away and return a summary; very large ones go to the background."""
 	frappe.only_for(MANAGER_ROLES)
@@ -297,7 +297,7 @@ def email_invitations(course: str, scope: str = "open", department: str | None =
 
 
 def _assign_missing(course: str):
-	"""Everyone should be on the list before HR emails 'all employees'."""
+	"""Everyone should be on the list before the IT department emails 'all employees'."""
 	enrolment.assign_all_active(course, commit=False)
 
 
@@ -316,7 +316,7 @@ def send_reminders_now(course: str) -> dict:
 
 @frappe.whitelist()
 def get_course_dashboard(course: str) -> dict:
-	frappe.only_for((*MANAGER_ROLES, "HR Manager"))
+	frappe.only_for(MANAGER_ROLES)
 	rows = frappe.get_all(
 		"Training Assignment",
 		filters={"course": course, "status": ("!=", "Cancelled")},
@@ -343,7 +343,7 @@ def get_course_dashboard(course: str) -> dict:
 
 @frappe.whitelist()
 def preview_paper(course: str) -> list[dict]:
-	"""A sample paper with the answer key, for HR to sanity-check the bank."""
+	"""A sample paper with the answer key, for the IT department to sanity-check the bank."""
 	frappe.only_for(MANAGER_ROLES)
 	paper = assessment.build_paper(frappe.get_doc("Training Course", course))
 	return [
@@ -406,11 +406,11 @@ def _my_assignment(name: str):
 		frappe.local.flags.commit = True
 	if doc.user != user:
 		frappe.throw(
-			_("Training {0} is assigned to a different login than the one you are signed in with ({1}). Ask HR to check the User on {0}, or sign in with the login it was sent to.").format(
+			_("Training {0} is assigned to a different login than the one you are signed in with ({1}). Contact the IT department to check the User on {0}, or sign in with the login it was sent to.").format(
 				doc.name, user
 			),
 			frappe.PermissionError,
 		)
 	if doc.status == "Cancelled":
-		frappe.throw(_("This training has been withdrawn by HR."))
+		frappe.throw(_("This training has been withdrawn by the IT department."))
 	return doc

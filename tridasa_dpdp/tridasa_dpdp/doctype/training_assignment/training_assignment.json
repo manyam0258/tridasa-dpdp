@@ -65,7 +65,7 @@
    "in_standard_filter": 1,
    "label": "Employee",
    "options": "Employee",
-   "description": "Empty for users with no Employee record; they are tracked by their login."
+   "reqd": 1
   },
   {
    "fetch_from": "employee.employee_name",
@@ -292,7 +292,7 @@
    "fieldtype": "Datetime",
    "label": "Invitation Emailed On",
    "read_only": 1,
-   "description": "Empty until HR sends the invitation email. Reminders and manager escalations only go to employees who were invited by email."
+   "description": "Empty until the IT department sends the invitation email. Reminders and manager escalations only go to employees who were invited by email."
   },
   {
    "fieldname": "reminders_sent",
@@ -327,7 +327,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-11-23 08:32:18.289646",
+ "modified": "2026-11-24 08:26:52.814253",
  "modified_by": "Administrator",
  "module": "Tridasa DPDP",
  "name": "Training Assignment",
@@ -355,18 +355,6 @@
    "read": 1,
    "report": 1,
    "role": "Training Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "HR Manager",
    "share": 1,
    "write": 1
   }
